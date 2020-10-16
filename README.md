@@ -43,14 +43,14 @@ $ ./demo/scripts/start-flares.sh
 
 # send funds
 
-$ gaiad tx bank send \
-    validator $(gaiad keys show user --keyring-backend=test --home ./demo/runtime/flares -a) 100000samoleans \
+$ flaresd tx bank send \
+    validator $(flaresd keys show user --keyring-backend=test --home ./demo/runtime/flares -a) 100000samoleans \
     --keyring-backend=test \
     --home ./demo/runtime/flares \
     --chain-id=flares
 
-$ gaiad q bank balances \
-    $(gaiad keys show user --keyring-backend=test --home ./demo/runtime/flares -a)
+$ flaresd q bank balances \
+    $(flaresd keys show user --keyring-backend=test --home ./demo/runtime/flares -a)
 
 $ gaiad tx bank send \
     validator $(gaiad keys show user --keyring-backend=test --home ./demo/runtime/ibc0 -a) 100000samoleans \
@@ -73,11 +73,11 @@ $ rly keys delete flares testkey
 $ rly keys delete ibc0 testkey
 
 # Now, add the key seeds from each chain to the relayer to give it funds to work with
-$ rly keys restore ibc0 testkey "$(jq -r '.mnemonic' demo/runtime/ibc0/key_seed.json)"
-$ rly k r flares testkey "$(jq -r '.mnemonic' demo/runtime/flares/key_seed.json)"
+$ rly keys restore flares testkey "$(jq -r '.mnemonic' demo/runtime/flares/key_seed.json)"
+$ rly k r ibc0 testkey "$(jq -r '.mnemonic' demo/runtime/ibc0/key_seed.json)"
 
-$ rly light init ibc0 -f
-$ rly l i flares -f
+$ rly light init flares -f
+$ rly l i ibc0 -f
 
 $ rly chains list
 

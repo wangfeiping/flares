@@ -3,7 +3,7 @@ module github.com/wangfeiping/flares
 go 1.14
 
 require (
-    github.com/cosmos/cosmos-sdk v0.34.4-0.20200929112910-ddaa3c5176bc
+	github.com/cosmos/cosmos-sdk v0.34.4-0.20200929112910-ddaa3c5176bc
 	github.com/gogo/protobuf v1.3.1
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.15.0

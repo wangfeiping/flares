@@ -1,0 +1,9 @@
+syntax = "proto3";
+package flares.flares.v1beta1;
+
+option go_package = "github.com/wangfeiping/flares/x/flares/types";
+
+// GenesisState defines the capability module's genesis state.
+message GenesisState {
+}
+

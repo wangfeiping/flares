@@ -2,39 +2,40 @@
 
 **flares** is a blockchain application built using Cosmos SDK and Tendermint and generated with [Starport](https://github.com/tendermint/starport).
 
-## Get started
+## Create
 
 ```
-starport serve
+# github.com/tendermint/starport   @ latest of develop
+# github.com/cosmos/gaia           @ stargate-4
+# github.com/ovrclk/relayer        @ stargate-4
+# github.com/cosmos/cosmos-sdk     @ v0.40.0-rc0
+# github.com/tendermint/tendermint @ v0.34.0-rc4.0.20201005135527-d7d0ffea13c6
+
+$ starport app github.com/wangfeiping/flares --sdk-version stargate
+
+$ cd flares/
+
+$ starport serve
 ```
 
 `serve` command installs dependencies, initializes and runs the application.
 
-## Configure
+## Relay to gaia
 
-Initialization parameters of your app are stored in `config.yml`.
-
-### `accounts`
-
-A list of user accounts created during genesis of your application.
-
-| Key   | Required | Type            | Description                                       |
-| ----- | -------- | --------------- | ------------------------------------------------- |
-| name  | Y        | String          | Local name of the key pair                        |
-| coins | Y        | List of Strings | Initial coins with denominations (e.g. "100coin") |
-
-### Relay to gaia
+### init & start chains
 
 ```
-# init & start gaiad
-
 $ gaiad version --long
 name: gaia
 server_name: gaiad
-version: stargate-3
-commit: 5f28583b510a86fac671e4590d0863d56989735d
+version: stargate-4
+commit: 3a8b1b414004ccddfa255fd0cd1499bbf6659d71
 build_tags: netgo,ledger
-go: go version go1.14.7 linux/amd64
+go: go version go1.15.2 linux/amd64
+
+# clear the old data
+
+$ rm -rf ./demo/runtime/
 
 # start two chains
 
@@ -62,7 +63,11 @@ $ gaiad q bank balances \
     $(gaiad keys show user --keyring-backend=test --home ./demo/runtime/ibc0 -a) \
     --node=tcp://127.0.0.1:26557
 
-# https://github.com/ovrclk/relayer @ stargate-3
+```
+
+### Relayer
+
+```
 
 $ rly config init
 

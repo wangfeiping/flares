@@ -3,3 +3,4 @@ frontend/dist
 frontend/.cache
 
 demo/runtime/
+secret.yml

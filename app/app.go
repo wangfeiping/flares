@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -79,13 +80,15 @@ import (
 	flarestypes "github.com/wangfeiping/flares/x/flares/types"
 
 	"github.com/wangfeiping/flares/x/nameservice"
+	nskeeper "github.com/wangfeiping/flares/x/nameservice/keeper"
+	nstypes "github.com/wangfeiping/flares/x/nameservice/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
 var (
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome = func(appName string) string {
-		return os.ExpandEnv("$HOME/flaresd")
+		return os.ExpandEnv(fmt.Sprintf("$HOME/.%sd", appName))
 	}
 
 	// ModuleBasics defines the module BasicManager is in charge of setting up basic,
@@ -171,7 +174,8 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
-	flaresKeeper flareskeeper.Keeper
+	flaresKeeper      flareskeeper.Keeper
+	NameServiceKeeper nskeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -201,6 +205,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		flarestypes.StoreKey,
+		nstypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -303,7 +308,8 @@ func New(
 	app.flaresKeeper = *flareskeeper.NewKeeper(
 		appCodec, keys[flarestypes.StoreKey], keys[flarestypes.MemStoreKey],
 	)
-
+	app.NameServiceKeeper = *nskeeper.NewKeeper(
+		appCodec, keys[nstypes.StoreKey], keys[nstypes.MemStoreKey])
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// NOTE: Any module instantiated in the module manager that is later modified
@@ -330,6 +336,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		flares.NewAppModule(appCodec, app.flaresKeeper),
+		nameservice.NewAppModule(appCodec, app.NameServiceKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 

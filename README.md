@@ -44,6 +44,10 @@ $ ./demo/scripts/start-flares.sh
 
 # send funds
 
+$ flaresd keys list \
+    --keyring-backend=test \
+    --home ./demo/runtime/flares
+
 $ flaresd tx bank send \
     validator $(flaresd keys show user --keyring-backend=test --home ./demo/runtime/flares -a) 100000samoleans \
     --keyring-backend=test \

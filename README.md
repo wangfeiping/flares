@@ -98,6 +98,12 @@ $ rly q bal flares | jq
 
 ```
 
+## Demos
+
+### nameservice - flares with payment
+
+https://tutorials.cosmos.network/nameservice/tutorial/00-intro.html
+
 ## Learn more
 
 - [Starport](https://github.com/tendermint/starport)

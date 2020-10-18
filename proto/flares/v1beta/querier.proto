@@ -1,15 +1,35 @@
 syntax = "proto3";
-package flares.flares.v1beta1;
+package nameservice.nameservice.v1beta1;
 
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "nameservice/v1beta/whois.proto";
+import "nameservice/v1beta/name.proto";
 
 
-option go_package = "github.com/wangfeiping/flares/x/flares/types";
+option go_package = "github.com/wangfeiping/nameservice/x/nameservice/types";
 
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+	rpc AllWhois(QueryAllWhoisRequest) returns (QueryAllWhoisResponse);
+	rpc AllName(QueryAllNameRequest) returns (QueryAllNameResponse);
 }
 
 // this line is used by starport scaffolding # 3
+message QueryAllWhoisRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllWhoisResponse {
+	repeated MsgWhois whois = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryAllNameRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllNameResponse {
+	repeated MsgName name = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

@@ -17,16 +17,23 @@ func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(clientCtx, r)
 	registerTxHandlers(clientCtx, r)
 
+	registerQueryRoutes(clientCtx, r)
+	registerTxHandlers(clientCtx, r)
+
 }
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 3
+	r.HandleFunc("custom/nameservice/"+types.QueryListWhois, listWhoisHandler(clientCtx)).Methods("GET")
+
 	r.HandleFunc("custom/nameservice/"+types.QueryListName, listNameHandler(clientCtx)).Methods("GET")
 
 }
 
 func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 4
+	r.HandleFunc("/nameservice/whois", createWhoisHandler(clientCtx)).Methods("POST")
+
 	r.HandleFunc("/nameservice/name", createNameHandler(clientCtx)).Methods("POST")
 
 }

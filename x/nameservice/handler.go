@@ -17,7 +17,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		switch msg := msg.(type) {
 		// this line is used by starport scaffolding # 1
 		case *types.MsgWhois:
-			return handleMsgCreateWhois(ctx, k, msg)
+			return handleMsgBuyName(ctx, k, msg)
 		case *types.MsgName:
 			return handleMsgCreateName(ctx, k, msg)
 		default:

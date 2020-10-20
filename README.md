@@ -21,6 +21,16 @@ Refer to a demo project [nameservice](https://tutorials.cosmos.network/nameservi
 
 Refer to a demo project [scavenge](https://tutorials.cosmos.network/scavenge/tutorial/01-background.html) and make some changes.
 
+## Introduction
+
+### Concept
+
+- contract
+
+- board
+
+- clearing
+
 ## Create
 
 ```

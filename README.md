@@ -1,6 +1,25 @@
-# flares
+# Flares
 
-**flares** is a blockchain application built using Cosmos SDK and Tendermint and generated with [Starport](https://github.com/tendermint/starport).
+**Flares** is a blockchain application built using Cosmos SDK and Tendermint and generated with [Starport](https://github.com/tendermint/starport).
+
+- Flares was designed to apply to scenes that are willing to
+ accept more value consensus-based tokens, payment, auctions, games, DIFY, etc.  
+- It is not intended to increase the use of just one token,
+ but to discover the value of all crypto assets.  
+- It's an IBC network.  
+- It's a no-tokens-binding blockchain.  
+- It's a value consensus.  
+- It's a multi to multi contract.  
+
+## Demos
+
+### Name Service - flares with payment or auctions
+
+Refer to a demo project [nameservice](https://tutorials.cosmos.network/nameservice/tutorial/00-intro.html) and make some changes.
+
+### Sealed Monsters - flares with games
+
+Refer to a demo project [scavenge](https://tutorials.cosmos.network/scavenge/tutorial/01-background.html) and make some changes.
 
 ## Create
 
@@ -101,12 +120,6 @@ $ rly q bal ibc0 | jq
 $ rly q bal flares | jq
 
 ```
-
-## Demos
-
-### nameservice - flares with payment
-
-https://tutorials.cosmos.network/nameservice/tutorial/00-intro.html
 
 ## Learn more
 

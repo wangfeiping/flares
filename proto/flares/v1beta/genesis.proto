@@ -1,7 +1,7 @@
 syntax = "proto3";
-package nameservice.nameservice.v1beta1;
+package flares.flares.v1beta1;
 
-option go_package = "github.com/wangfeiping/nameservice/x/nameservice/types";
+option go_package = "github.com/wangfeiping/flares/x/flares/types";
 
 // GenesisState defines the capability module's genesis state.
 message GenesisState {

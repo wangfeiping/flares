@@ -3,11 +3,11 @@ package nameservice.nameservice.v1beta1;
 
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
-import "nameservice/v1beta/whois.proto";
-import "nameservice/v1beta/name.proto";
+import "flares/v1beta/whois.proto";
+import "flares/v1beta/name.proto";
 
 
-option go_package = "github.com/wangfeiping/nameservice/x/nameservice/types";
+option go_package = "github.com/wangfeiping/flares/x/nameservice/types";
 
 // Query defines the gRPC querier service.
 service Query {

@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/cosmos/cosmos-sdk/client"
-    // this line is used by starport scaffolding # 1
+    "github.com/wangfeiping/flares/x/flares/types"
 )
 
 const (
@@ -14,13 +14,20 @@ const (
 // RegisterRoutes registers flares-related REST handlers to a router
 func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
     // this line is used by starport scaffolding # 2
+	registerQueryRoutes(clientCtx, r)
+	registerTxHandlers(clientCtx, r)
+
 }
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
     // this line is used by starport scaffolding # 3
+    r.HandleFunc("custom/flares/" + types.QueryListContract, listContractHandler(clientCtx)).Methods("GET")
+
 }
 
 func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
     // this line is used by starport scaffolding # 4
+    r.HandleFunc("/flares/contract", createContractHandler(clientCtx)).Methods("POST")
+
 }
 

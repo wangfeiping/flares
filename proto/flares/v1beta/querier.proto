@@ -3,6 +3,7 @@ package flares.flares.v1beta1;
 
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "flares/v1beta/contract.proto";
 
 
 option go_package = "github.com/wangfeiping/flares/x/flares/types";
@@ -10,6 +11,15 @@ option go_package = "github.com/wangfeiping/flares/x/flares/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+	rpc AllContract(QueryAllContractRequest) returns (QueryAllContractResponse);
 }
 
 // this line is used by starport scaffolding # 3
+message QueryAllContractRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllContractResponse {
+	repeated MsgContract contract = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

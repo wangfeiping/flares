@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	// "strings"
+
 	"github.com/gogo/protobuf/grpc"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -16,10 +18,13 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/wangfeiping/flares/x/flares/keeper"
-	"github.com/wangfeiping/flares/x/flares/types"
+
+	// banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	"github.com/wangfeiping/flares/x/flares/client/cli"
 	"github.com/wangfeiping/flares/x/flares/client/rest"
+	"github.com/wangfeiping/flares/x/flares/keeper"
+	"github.com/wangfeiping/flares/x/flares/types"
 )
 
 var (
@@ -83,12 +88,12 @@ func (a AppModuleBasic) RegisterGRPCRoutes(_ client.Context, _ *runtime.ServeMux
 
 // GetTxCmd returns the capability module's root tx command.
 func (a AppModuleBasic) GetTxCmd() *cobra.Command {
-    return cli.GetTxCmd()
+	return cli.GetTxCmd()
 }
 
 // GetQueryCmd returns the capability module's root query command.
 func (AppModuleBasic) GetQueryCmd() *cobra.Command {
-    return cli.GetQueryCmd(types.StoreKey)
+	return cli.GetQueryCmd(types.StoreKey)
 }
 
 // ----------------------------------------------------------------------------

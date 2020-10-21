@@ -44,6 +44,13 @@ $ starport app github.com/wangfeiping/flares --sdk-version stargate
 
 $ cd flares/
 
+$ starport type contract key receiver accept durationHeight bottom \
+    --module flares --sdk-version stargate
+
+$ starport type board base baseName baseAmount accept acceptName acceptAmount \
+    source \
+    --module flares --sdk-version stargate
+
 $ starport serve
 ```
 

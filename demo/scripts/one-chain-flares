@@ -64,7 +64,7 @@ sed -i 's/timeout_commit = "5s"/timeout_commit = "1s"/g' $CHAINDIR/$CHAINID/conf
 sed -i 's/timeout_propose = "3s"/timeout_propose = "1s"/g' $CHAINDIR/$CHAINID/config/config.toml
 sed -i 's/index_all_keys = false/index_all_keys = true/g' $CHAINDIR/$CHAINID/config/config.toml
 # sed -i '' 's#index-events = \[\]#index-events = \["message.action","send_packet.packet_src_channel","send_packet.packet_sequence"\]#g' $CHAINDIR/$CHAINID/config/app.toml
-sed -i 's/log_level = "main:info/log_level = "flares_bank:debug,main:info/g' $CHAINDIR/$CHAINID/config/config.toml
+sed -i 's/log_level = "main:info/log_level = "flares\/x\/bank:debug,main:info/g' $CHAINDIR/$CHAINID/config/config.toml
 
 # Start the gaia
 flaresd --home $CHAINDIR/$CHAINID start \

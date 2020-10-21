@@ -2,11 +2,13 @@ package keeper
 
 import (
 	"context"
+	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/exported"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/bank/types"
+	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 )
 
 var _ bank.Keeper = (*BankKeeperWrapper)(nil)
@@ -58,7 +60,7 @@ func (k BankKeeperWrapper) InputOutputCoins(ctx sdk.Context,
 	if err := k.k.InputOutputCoins(ctx, inputs, outputs); err != nil {
 		return err
 	}
-	ctx.Logger().With("module", "flares_bank").
+	ctx.Logger().With("module", "flares/x/bank").
 		Info("transfer: InputOutputCoins", "height", ctx.BlockHeight())
 	return nil
 }
@@ -67,8 +69,8 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 	if err := k.k.SendCoins(ctx, fromAddr, toAddr, amt); err != nil {
 		return err
 	}
-	ctx.Logger().With("module", "flares_bank").
-		Info("transfer: SendCoins", "height", ctx.BlockHeight())
+	ctx.Logger().With("module", "flares/x/bank").
+		Info("transfer: SendCoins", "height", ctx.BlockHeight(), "amount", amt)
 	return nil
 }
 func (k BankKeeperWrapper) SubtractCoins(ctx sdk.Context,
@@ -144,7 +146,14 @@ func (k BankKeeperWrapper) UndelegateCoinsFromModuleToAccount(ctx sdk.Context,
 	return k.k.UndelegateCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, amt)
 }
 func (k BankKeeperWrapper) MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
-	return k.k.MintCoins(ctx, moduleName, amt)
+	if err := k.k.MintCoins(ctx, moduleName, amt); err != nil {
+		return err
+	}
+	if strings.EqualFold(moduleName, ibctypes.ModuleName) {
+		ctx.Logger().With("module", "flares/x/bank").
+			Info("IBC transfer: MintCoins", "height", ctx.BlockHeight(), "amount", amt)
+	}
+	return nil
 }
 func (k BankKeeperWrapper) BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
 	return k.k.BurnCoins(ctx, moduleName, amt)

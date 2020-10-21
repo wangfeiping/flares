@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -135,15 +136,17 @@ func (k BankKeeperWrapper) SendCoinsFromModuleToAccount(ctx sdk.Context,
 		return err
 	}
 	if strings.EqualFold(senderModule, ibctypes.ModuleName) {
-		ctx.Logger().With("module", "flares/x/bank").
-			Debug("IBC transfer: SendCoinsFromModuleToAccount", "height", ctx.BlockHeight(),
-				"addr", recipientAddr.String())
 		// Check if the AccAddress belongs to a contract.
 		if k.flaresKeeper.CheckContractReceiver(ctx, recipientAddr) {
-			// Store a transfer record.
+			// Because this function can not get the sending address,
+			// so it's not allowed to IBC transfer to a contract receiver address.
 			ctx.Logger().With("module", "flares/x/bank").
-				Debug("IBC transfer: it is a contract receiver", "height", ctx.BlockHeight(),
-					"receiver", recipientAddr.String())
+				Error("IBC transfer: it's not allowed to IBC transfer to a contract receiver address",
+					"height", ctx.BlockHeight(), "receiver", recipientAddr.String())
+			err := fmt.Errorf("IBC transfer: %s: height=%s, receiver=%s",
+				"it's not allowed to IBC transfer to a contract receiver address",
+				ctx.BlockHeight(), recipientAddr.String())
+			return err
 		}
 	}
 	return nil
@@ -166,18 +169,6 @@ func (k BankKeeperWrapper) UndelegateCoinsFromModuleToAccount(ctx sdk.Context,
 	return k.k.UndelegateCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, amt)
 }
 func (k BankKeeperWrapper) MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
-	// if err := k.k.MintCoins(ctx, moduleName, amt); err != nil {
-	// 	return err
-	// }
-	// if strings.EqualFold(moduleName, ibctypes.ModuleName) {
-	// 	ctx.Logger().With("module", "flares/x/bank").
-	// 		Debug("IBC transfer: MintCoins", "height", ctx.BlockHeight())
-	// 		// Check if the AccAddress belongs to a contract.
-	// 	k.flaresKeeper.CheckContractReceiver()
-	// 	// Store a transfer record.
-
-	// }
-	// return nil
 	return k.k.MintCoins(ctx, moduleName, amt)
 }
 func (k BankKeeperWrapper) BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {

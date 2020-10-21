@@ -3,8 +3,6 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/tendermint/tendermint/crypto"
-
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/wangfeiping/flares/x/flares/types"
@@ -12,10 +10,12 @@ import (
 
 func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractKey))
-	contract.Receiver = accAddress(types.ModuleName, types.ContractKey, contract.Key).String()
+	key := fmt.Sprintf("%s-%s-%s-%s", types.ContractKey,
+		contract.Creator.String(), contract.Key, contract.Id)
+	contract.Receiver = AccAddressString(types.ModuleName, key).String()
 
 	b := k.cdc.MustMarshalBinaryBare(&contract)
-	store.Set(types.KeyPrefix(types.ContractKey), b)
+	store.Set(types.KeyPrefix(key), b)
 }
 
 func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
@@ -31,9 +31,4 @@ func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
 	}
 
 	return
-}
-
-func accAddress(moduleName, contractKey, key string) sdk.AccAddress {
-	return sdk.AccAddress(crypto.AddressHash([]byte(
-		fmt.Sprintf("%s-%s-%s", moduleName, contractKey, key))))
 }

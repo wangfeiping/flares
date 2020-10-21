@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 
+	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -28,4 +29,9 @@ func NewKeeper(cdc codec.Marshaler, storeKey, memKey sdk.StoreKey) *Keeper {
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func AccAddressString(moduleName, key string) sdk.AccAddress {
+	return sdk.AccAddress(crypto.AddressHash([]byte(
+		fmt.Sprintf("%s-%s", moduleName, key))))
 }

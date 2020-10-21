@@ -243,9 +243,12 @@ func New(
 	// app.BankKeeper = bankkeeper.NewBaseKeeper(
 	// 	appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
 	// )
+	app.flaresKeeper = *flareskeeper.NewKeeper(
+		appCodec, keys[flarestypes.StoreKey], keys[flarestypes.MemStoreKey],
+	)
 	app.BankKeeper = flaresbank.NewBankKeeperWrapper(bankkeeper.NewBaseKeeper(
 		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
-	))
+	), app.flaresKeeper)
 
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
@@ -310,9 +313,6 @@ func New(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
-	app.flaresKeeper = *flareskeeper.NewKeeper(
-		appCodec, keys[flarestypes.StoreKey], keys[flarestypes.MemStoreKey],
-	)
 	app.NameServiceKeeper = *nskeeper.NewKeeper(
 		appCodec, keys[nstypes.StoreKey], keys[nstypes.MemStoreKey])
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition

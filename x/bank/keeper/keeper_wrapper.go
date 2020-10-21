@@ -9,16 +9,20 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	"github.com/cosmos/cosmos-sdk/x/bank/types"
 	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
+
+	"github.com/wangfeiping/flares/x/flares/keeper"
 )
 
 var _ bank.Keeper = (*BankKeeperWrapper)(nil)
 
 type BankKeeperWrapper struct {
-	k bank.Keeper
+	k            bank.Keeper
+	flaresKeeper keeper.Keeper
 }
 
-func NewBankKeeperWrapper(bankKeeper bank.Keeper) bank.Keeper {
-	return BankKeeperWrapper{k: bankKeeper}
+func NewBankKeeperWrapper(bankKeeper bank.Keeper, flaresK keeper.Keeper) bank.Keeper {
+	return BankKeeperWrapper{k: bankKeeper,
+		flaresKeeper: flaresK}
 }
 
 // github.com/cosmos/cosmos-sdk/x/bank/keeper.ViewKeeper interface
@@ -127,7 +131,23 @@ func (k BankKeeperWrapper) IterateAllDenomMetaData(ctx sdk.Context, cb func(type
 }
 func (k BankKeeperWrapper) SendCoinsFromModuleToAccount(ctx sdk.Context,
 	senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
-	return k.k.SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, amt)
+	if err := k.k.SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, amt); err != nil {
+		return err
+	}
+	if strings.EqualFold(senderModule, ibctypes.ModuleName) {
+		ctx.Logger().With("module", "flares/x/bank").
+			Debug("IBC transfer: SendCoinsFromModuleToAccount", "height", ctx.BlockHeight(),
+				"addr", recipientAddr.String())
+		// Check if the AccAddress belongs to a contract.
+		if k.flaresKeeper.CheckContractReceiver(ctx, recipientAddr) {
+			// Store a transfer record.
+			ctx.Logger().With("module", "flares/x/bank").
+				Debug("IBC transfer: it is a contract receiver", "height", ctx.BlockHeight(),
+					"receiver", recipientAddr.String())
+		}
+	}
+	return nil
+
 }
 func (k BankKeeperWrapper) SendCoinsFromModuleToModule(ctx sdk.Context,
 	senderModule, recipientModule string, amt sdk.Coins) error {
@@ -146,14 +166,19 @@ func (k BankKeeperWrapper) UndelegateCoinsFromModuleToAccount(ctx sdk.Context,
 	return k.k.UndelegateCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, amt)
 }
 func (k BankKeeperWrapper) MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
-	if err := k.k.MintCoins(ctx, moduleName, amt); err != nil {
-		return err
-	}
-	if strings.EqualFold(moduleName, ibctypes.ModuleName) {
-		ctx.Logger().With("module", "flares/x/bank").
-			Info("IBC transfer: MintCoins", "height", ctx.BlockHeight(), "amount", amt)
-	}
-	return nil
+	// if err := k.k.MintCoins(ctx, moduleName, amt); err != nil {
+	// 	return err
+	// }
+	// if strings.EqualFold(moduleName, ibctypes.ModuleName) {
+	// 	ctx.Logger().With("module", "flares/x/bank").
+	// 		Debug("IBC transfer: MintCoins", "height", ctx.BlockHeight())
+	// 		// Check if the AccAddress belongs to a contract.
+	// 	k.flaresKeeper.CheckContractReceiver()
+	// 	// Store a transfer record.
+
+	// }
+	// return nil
+	return k.k.MintCoins(ctx, moduleName, amt)
 }
 func (k BankKeeperWrapper) BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
 	return k.k.BurnCoins(ctx, moduleName, amt)

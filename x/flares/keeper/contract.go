@@ -16,6 +16,9 @@ func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) {
 
 	b := k.cdc.MustMarshalBinaryBare(&contract)
 	store.Set(types.KeyPrefix(key), b)
+
+	k.getReceiverStore(ctx).
+		Set(types.KeyPrefix(contract.Receiver), []byte(key))
 }
 
 func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
@@ -31,4 +34,13 @@ func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
 	}
 
 	return
+}
+
+func (k Keeper) CheckContractReceiver(ctx sdk.Context, addr sdk.AccAddress) bool {
+	return k.getReceiverStore(ctx).Has(types.KeyPrefix(addr.String()))
+}
+
+func (k Keeper) getReceiverStore(ctx sdk.Context) prefix.Store {
+	return prefix.NewStore(ctx.KVStore(k.storeKey),
+		types.KeyPrefix(fmt.Sprintf("%s-%s", types.ReceiverKey, types.ContractKey)))
 }

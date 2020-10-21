@@ -24,3 +24,7 @@ func KeyPrefix(p string) []byte {
 const (
 	ContractKey= "Contract"
 )
+
+const (
+	BoardKey= "Board"
+)

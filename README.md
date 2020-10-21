@@ -47,7 +47,8 @@ $ cd flares/
 $ starport type contract key receiver accept durationHeight bottom \
     --module flares --sdk-version stargate
 
-$ starport type board base baseName baseAmount accept acceptName acceptAmount \
+$ starport type board base baseDenom baseAddress \
+    accept acceptDenom acceptAddress \
     source \
     --module flares --sdk-version stargate
 

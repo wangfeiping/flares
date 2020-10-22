@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-    "github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -15,14 +15,13 @@ import (
 var _ = strconv.Itoa(42)
 
 type createContractRequest struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string `json:"creator"`
-	Key string `json:"key"`
-	Receiver string `json:"receiver"`
-	Accept string `json:"accept"`
-	DurationHeight string `json:"durationHeight"`
-	Bottom string `json:"bottom"`
-	
+	BaseReq        rest.BaseReq `json:"base_req"`
+	Creator        string       `json:"creator"`
+	Key            string       `json:"key"`
+	Receiver       string       `json:"receiver"`
+	Accept         string       `json:"accept"`
+	DurationHeight int32        `json:"durationHeight"`
+	Bottom         string       `json:"bottom"`
 }
 
 func createContractHandler(clientCtx client.Context) http.HandlerFunc {
@@ -44,17 +43,15 @@ func createContractHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		
 		parsedKey := req.Key
-		
+
 		parsedReceiver := req.Receiver
-		
+
 		parsedAccept := req.Accept
-		
+
 		parsedDurationHeight := req.DurationHeight
-		
+
 		parsedBottom := req.Bottom
-		
 
 		msg := types.NewMsgContract(
 			creator,
@@ -63,7 +60,6 @@ func createContractHandler(clientCtx client.Context) http.HandlerFunc {
 			parsedAccept,
 			parsedDurationHeight,
 			parsedBottom,
-			
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

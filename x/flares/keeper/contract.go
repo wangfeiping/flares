@@ -11,20 +11,23 @@ import (
 )
 
 var (
-	ErrContractExists = sdkerrors.Register(types.ModuleName, 10001, "contract already exists")
+	ErrContractExists   = sdkerrors.Register(types.ModuleName, 10001, "contract already exists")
+	ErrContractNotFound = sdkerrors.Register(types.ModuleName, 10002, "contract not found")
 )
 
 func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) error {
 	store := k.getContractStore(ctx)
 	contractKey := fmt.Sprintf("%s-%s", types.ContractKey, contract.Key)
-	contract.Receiver = AccAddressString(types.ModuleName,
-		fmt.Sprintf("%s%s", contractKey, contract.Id)).String()
 
 	if store.Has(types.KeyPrefix(contractKey)) {
 		ctx.Logger().With("module", types.ModuleName).
 			Error(ErrContractExists.Error(), ": ", contractKey)
 		return ErrContractExists
 	}
+
+	contract.Receiver = AccAddressString(types.ModuleName,
+		fmt.Sprintf("%s%s", contractKey, contract.Id)).String()
+	contract.Height = uint64(ctx.BlockHeight())
 
 	b := k.cdc.MustMarshalBinaryBare(&contract)
 	store.Set(types.KeyPrefix(contractKey), b)
@@ -33,6 +36,18 @@ func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) erro
 		Set(types.KeyPrefix(contract.Receiver), []byte(contractKey))
 
 	return nil
+}
+
+func (k Keeper) GetContract(ctx sdk.Context,
+	contractKey string) (types.MsgContract, error) {
+	store := k.getContractStore(ctx)
+
+	var msg types.MsgContract
+	if bz := store.Get(types.KeyPrefix(contractKey)); bz != nil {
+		k.cdc.MustUnmarshalBinaryBare(bz, &msg)
+		return msg, nil
+	}
+	return msg, ErrContractNotFound
 }
 
 func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
@@ -50,9 +65,9 @@ func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
 	return
 }
 
-func (k Keeper) CheckContractReceiver(ctx sdk.Context, addr sdk.AccAddress) bool {
+func (k Keeper) CheckContractReceiver(ctx sdk.Context, addr sdk.AccAddress) []byte {
 	return k.getContractReceiverStore(ctx).
-		Has(types.KeyPrefix(addr.String()))
+		Get(types.KeyPrefix(addr.String()))
 }
 
 func (k Keeper) getContractStore(ctx sdk.Context) prefix.Store {

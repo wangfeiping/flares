@@ -25,9 +25,10 @@ const (
 	ContractKey         = "Contract"
 	ContractReceiverKey = "Receiver"
 	ContractTransferKey = "Transfer"
+	ClosedContractKey   = "ClosedContract"
 	BoardKey            = "Board"
 )
 
 const (
-	ContractTransferRecordKey= "ContractTransferRecord"
+	ContractTransferRecordKey = "ContractTransferRecord"
 )

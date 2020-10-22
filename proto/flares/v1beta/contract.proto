@@ -11,7 +11,7 @@ message MsgContract {
   string key = 3; 
   string receiver = 4; 
   string accept = 5; 
-  string durationHeight = 6; 
+  int32 durationHeight = 6; 
   string bottom = 7; 
+  fixed64 height = 8; 
 }
-

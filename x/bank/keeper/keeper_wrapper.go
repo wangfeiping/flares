@@ -43,7 +43,10 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 		return err
 	}
 	// Check if the address belongs to a contract.
-	if k.flaresKeeper.CheckContractReceiver(ctx, toAddr) {
+	if ck := k.flaresKeeper.CheckContractReceiver(ctx, toAddr); ck != nil {
+		// TODO check contract bottom
+
+		// stores the record of transfer
 		rec := types.MsgContractTransferRecord{
 			From:   fromAddr.String(),
 			To:     toAddr.String(),
@@ -52,6 +55,18 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 		ctx.Logger().With("module", "flares/x/bank").
 			Info("SendCoins to a flares contract",
 				"height", ctx.BlockHeight(), "receiver", toAddr.String())
+		// check to see if the lowest price is met.
+		contract, err := k.flaresKeeper.GetContract(ctx, string(ck))
+		if err != nil {
+			return err
+		}
+		if !contract.IsAuctions() {
+			// it is traded
+			// TODO contract clearing
+			ctx.Logger().With("module", types.ModuleName).
+				Info("contract clearing",
+					"height", ctx.BlockHeight(), "contract", contract.Key)
+		}
 	}
 	return nil
 }
@@ -65,7 +80,7 @@ func (k BankKeeperWrapper) SendCoinsFromModuleToAccount(ctx sdk.Context,
 	}
 	if strings.EqualFold(senderModule, ibctypes.ModuleName) {
 		// Check if the address belongs to a contract.
-		if k.flaresKeeper.CheckContractReceiver(ctx, recipientAddr) {
+		if k.flaresKeeper.CheckContractReceiver(ctx, recipientAddr) != nil {
 			// Because this function can not get the sending address,
 			// so it's not allowed to IBC transfer to a contract receiver address.
 			ctx.Logger().With("module", "flares/x/bank").

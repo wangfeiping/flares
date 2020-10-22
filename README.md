@@ -3,7 +3,7 @@
 **Flares** is a blockchain application built using Cosmos SDK and Tendermint and generated with [Starport](https://github.com/tendermint/starport).
 
 - Flares was designed to apply to scenes that are willing to
- accept more value consensus-based tokens, payment, auctions, games, DIFY, etc.  
+ accept more value consensus-based tokens, payment, auctions, games, DeFi, etc.  
 - It is not intended to increase the use of just one token,
  but to discover the value of all crypto assets.  
 - It's an IBC network.  

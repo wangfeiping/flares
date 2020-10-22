@@ -142,6 +142,17 @@ $ rly q bal flares | jq
 
 ```
 
+## Protobuf
+
+```
+# changes the proto/*/*.proto file(s)
+
+# just execute
+
+$ ./scripts/protocgen
+
+```
+
 ## Learn more
 
 - [Starport](https://github.com/tendermint/starport)

@@ -70,12 +70,18 @@ func (k BankKeeperWrapper) InputOutputCoins(ctx sdk.Context,
 	return nil
 }
 func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
-	fromAddr sdk.AccAddress, toAddr sdk.AccAddress, amt sdk.Coins) error {
+	fromAddr, toAddr sdk.AccAddress, amt sdk.Coins) error {
 	if err := k.k.SendCoins(ctx, fromAddr, toAddr, amt); err != nil {
 		return err
 	}
-	ctx.Logger().With("module", "flares/x/bank").
-		Info("transfer: SendCoins", "height", ctx.BlockHeight(), "amount", amt)
+	// Check if the address belongs to a contract.
+	if k.flaresKeeper.CheckContractReceiver(ctx, toAddr) {
+		k.flaresKeeper.CreateContractTransferRecord(
+			ctx, fromAddr, toAddr, amt)
+		ctx.Logger().With("module", "flares/x/bank").
+			Info("SendCoins to a flares contract",
+				"height", ctx.BlockHeight(), "receiver", toAddr.String())
+	}
 	return nil
 }
 func (k BankKeeperWrapper) SubtractCoins(ctx sdk.Context,
@@ -136,7 +142,7 @@ func (k BankKeeperWrapper) SendCoinsFromModuleToAccount(ctx sdk.Context,
 		return err
 	}
 	if strings.EqualFold(senderModule, ibctypes.ModuleName) {
-		// Check if the AccAddress belongs to a contract.
+		// Check if the address belongs to a contract.
 		if k.flaresKeeper.CheckContractReceiver(ctx, recipientAddr) {
 			// Because this function can not get the sending address,
 			// so it's not allowed to IBC transfer to a contract receiver address.

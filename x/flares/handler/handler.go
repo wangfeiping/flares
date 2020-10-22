@@ -1,10 +1,11 @@
-package flares
+package handler
 
 import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/wangfeiping/flares/x/flares/keeper"
 	"github.com/wangfeiping/flares/x/flares/types"
 )

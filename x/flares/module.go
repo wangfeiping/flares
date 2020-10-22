@@ -23,6 +23,7 @@ import (
 
 	"github.com/wangfeiping/flares/x/flares/client/cli"
 	"github.com/wangfeiping/flares/x/flares/client/rest"
+	"github.com/wangfeiping/flares/x/flares/handler"
 	"github.com/wangfeiping/flares/x/flares/keeper"
 	"github.com/wangfeiping/flares/x/flares/types"
 )
@@ -121,7 +122,7 @@ func (am AppModule) Name() string {
 
 // Route returns the capability module's message routing key.
 func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
+	return sdk.NewRoute(types.RouterKey, handler.NewHandler(am.keeper))
 }
 
 // QuerierRoute returns the capability module's query routing key.
@@ -160,7 +161,9 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONMarshaler) json
 }
 
 // BeginBlock executes all ABCI BeginBlock logic respective to the capability module.
-func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
+func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
+	handler.BeginBlockHandle(ctx, req, am.keeper)
+}
 
 // EndBlock executes all ABCI EndBlock logic respective to the capability module. It
 // returns no validator updates.

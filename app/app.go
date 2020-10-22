@@ -353,7 +353,7 @@ func New(
 		upgradetypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 
-		// flarestypes.ModuleName,
+		flarestypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers( // flarestypes.ModuleName,

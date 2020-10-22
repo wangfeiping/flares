@@ -1,46 +1,50 @@
 package cli
 
 import (
-    "context"
+	"context"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
-    "github.com/wangfeiping/flares/x/flares/types"
+	"github.com/wangfeiping/flares/x/flares/types"
 )
 
 func CmdListContractTransferRecord() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-contractTransferRecord",
+		Use:   "list-contractTransferRecord [contract receiver address]",
+		Args:  cobra.MinimumNArgs(1),
 		Short: "list all contractTransferRecord",
 		RunE: func(cmd *cobra.Command, args []string) error {
-            clientCtx := client.GetClientContextFromCmd(cmd)
-            clientCtx, err := client.ReadQueryCommandFlags(clientCtx, cmd.Flags())
-            if err != nil {
-                return err
-            }
+			receiver := args[0]
 
-            pageReq, err := client.ReadPageRequest(cmd.Flags())
-            if err != nil {
-                return err
-            }
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.ReadQueryCommandFlags(clientCtx, cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-            queryClient := types.NewQueryClient(clientCtx)
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
+			}
 
-            params := &types.QueryAllContractTransferRecordRequest{
-                Pagination: pageReq,
-            }
+			queryClient := types.NewQueryClient(clientCtx)
 
-            res, err := queryClient.AllContractTransferRecord(context.Background(), params)
-            if err != nil {
-                return err
-            }
+			params := &types.QueryAllContractTransferRecordRequest{
+				Receiver:   receiver,
+				Pagination: pageReq,
+			}
 
-            return clientCtx.PrintOutput(res)
+			res, err := queryClient.AllContractTransferRecord(context.Background(), params)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintOutput(res)
 		},
 	}
 
 	flags.AddQueryFlagsToCmd(cmd)
 
-    return cmd
+	return cmd
 }

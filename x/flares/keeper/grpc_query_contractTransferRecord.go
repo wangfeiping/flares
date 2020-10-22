@@ -19,7 +19,7 @@ func (k Keeper) AllContractTransferRecord(c context.Context,
 	var contractTransferRecords []*types.MsgContractTransferRecord
 	ctx := sdk.UnwrapSDKContext(c)
 
-	contractTransferRecordStore := k.getContractTransferStore(ctx, "")
+	contractTransferRecordStore := k.getContractTransferStore(ctx, req.Receiver)
 
 	pageRes, err := query.Paginate(contractTransferRecordStore,
 		req.Pagination, func(key []byte, value []byte) error {

@@ -20,7 +20,8 @@ service Query {
 
 // this line is used by starport scaffolding # 3
 message QueryAllContractTransferRecordRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+	string receiver = 1; 
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 message QueryAllContractTransferRecordResponse {

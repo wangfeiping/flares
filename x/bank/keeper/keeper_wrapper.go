@@ -8,10 +8,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/bank/exported"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	"github.com/cosmos/cosmos-sdk/x/bank/types"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 
 	"github.com/wangfeiping/flares/x/flares/keeper"
+	"github.com/wangfeiping/flares/x/flares/types"
 )
 
 var _ bank.Keeper = (*BankKeeperWrapper)(nil)
@@ -37,7 +38,7 @@ func (k BankKeeperWrapper) HasBalance(ctx sdk.Context, addr sdk.AccAddress, amt 
 func (k BankKeeperWrapper) GetAllBalances(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins {
 	return k.k.GetAllBalances(ctx, addr)
 }
-func (k BankKeeperWrapper) GetAccountsBalances(ctx sdk.Context) []types.Balance {
+func (k BankKeeperWrapper) GetAccountsBalances(ctx sdk.Context) []banktypes.Balance {
 	return k.k.GetAccountsBalances(ctx)
 }
 func (k BankKeeperWrapper) GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin {
@@ -61,7 +62,7 @@ func (k BankKeeperWrapper) IterateAllBalances(ctx sdk.Context,
 // github.com/cosmos/cosmos-sdk/x/bank/keeper.SendKeeper interface
 
 func (k BankKeeperWrapper) InputOutputCoins(ctx sdk.Context,
-	inputs []types.Input, outputs []types.Output) error {
+	inputs []banktypes.Input, outputs []banktypes.Output) error {
 	if err := k.k.InputOutputCoins(ctx, inputs, outputs); err != nil {
 		return err
 	}
@@ -76,8 +77,11 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 	}
 	// Check if the address belongs to a contract.
 	if k.flaresKeeper.CheckContractReceiver(ctx, toAddr) {
-		k.flaresKeeper.CreateContractTransferRecord(
-			ctx, fromAddr, toAddr, amt)
+		rec := types.MsgContractTransferRecord{
+			From:   fromAddr.String(),
+			To:     toAddr.String(),
+			Amount: amt.String()}
+		k.flaresKeeper.CreateContractTransferRecord(ctx, rec)
 		ctx.Logger().With("module", "flares/x/bank").
 			Info("SendCoins to a flares contract",
 				"height", ctx.BlockHeight(), "receiver", toAddr.String())
@@ -97,10 +101,10 @@ func (k BankKeeperWrapper) SetBalance(ctx sdk.Context, addr sdk.AccAddress, bala
 func (k BankKeeperWrapper) SetBalances(ctx sdk.Context, addr sdk.AccAddress, balances sdk.Coins) error {
 	return k.k.SetBalances(ctx, addr, balances)
 }
-func (k BankKeeperWrapper) GetParams(ctx sdk.Context) types.Params {
+func (k BankKeeperWrapper) GetParams(ctx sdk.Context) banktypes.Params {
 	return k.k.GetParams(ctx)
 }
-func (k BankKeeperWrapper) SetParams(ctx sdk.Context, params types.Params) {
+func (k BankKeeperWrapper) SetParams(ctx sdk.Context, params banktypes.Params) {
 	k.k.SetParams(ctx, params)
 }
 func (k BankKeeperWrapper) SendEnabledCoin(ctx sdk.Context, coin sdk.Coin) bool {
@@ -115,10 +119,10 @@ func (k BankKeeperWrapper) BlockedAddr(addr sdk.AccAddress) bool {
 
 // github.com/cosmos/cosmos-sdk/x/bank/keeper.Keeper interface
 
-func (k BankKeeperWrapper) InitGenesis(ctx sdk.Context, state types.GenesisState) {
+func (k BankKeeperWrapper) InitGenesis(ctx sdk.Context, state banktypes.GenesisState) {
 	k.k.InitGenesis(ctx, state)
 }
-func (k BankKeeperWrapper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
+func (k BankKeeperWrapper) ExportGenesis(ctx sdk.Context) *banktypes.GenesisState {
 	return k.k.ExportGenesis(ctx)
 }
 func (k BankKeeperWrapper) GetSupply(ctx sdk.Context) exported.SupplyI {
@@ -127,13 +131,13 @@ func (k BankKeeperWrapper) GetSupply(ctx sdk.Context) exported.SupplyI {
 func (k BankKeeperWrapper) SetSupply(ctx sdk.Context, supply exported.SupplyI) {
 	k.k.SetSupply(ctx, supply)
 }
-func (k BankKeeperWrapper) GetDenomMetaData(ctx sdk.Context, denom string) types.Metadata {
+func (k BankKeeperWrapper) GetDenomMetaData(ctx sdk.Context, denom string) banktypes.Metadata {
 	return k.k.GetDenomMetaData(ctx, denom)
 }
-func (k BankKeeperWrapper) SetDenomMetaData(ctx sdk.Context, denomMetaData types.Metadata) {
+func (k BankKeeperWrapper) SetDenomMetaData(ctx sdk.Context, denomMetaData banktypes.Metadata) {
 	k.k.SetDenomMetaData(ctx, denomMetaData)
 }
-func (k BankKeeperWrapper) IterateAllDenomMetaData(ctx sdk.Context, cb func(types.Metadata) bool) {
+func (k BankKeeperWrapper) IterateAllDenomMetaData(ctx sdk.Context, cb func(banktypes.Metadata) bool) {
 	k.k.IterateAllDenomMetaData(ctx, cb)
 }
 func (k BankKeeperWrapper) SendCoinsFromModuleToAccount(ctx sdk.Context,
@@ -198,22 +202,22 @@ func (k BankKeeperWrapper) UnmarshalSupply(bz []byte) (exported.SupplyI, error) 
 // github.com/cosmos/cosmos-sdk/x/bank/keeper.QueryServer interface
 
 func (k BankKeeperWrapper) Balance(ctx context.Context,
-	req *types.QueryBalanceRequest) (*types.QueryBalanceResponse, error) {
+	req *banktypes.QueryBalanceRequest) (*banktypes.QueryBalanceResponse, error) {
 	return k.k.Balance(ctx, req)
 }
 func (k BankKeeperWrapper) AllBalances(ctx context.Context,
-	req *types.QueryAllBalancesRequest) (*types.QueryAllBalancesResponse, error) {
+	req *banktypes.QueryAllBalancesRequest) (*banktypes.QueryAllBalancesResponse, error) {
 	return k.k.AllBalances(ctx, req)
 }
 func (k BankKeeperWrapper) TotalSupply(ctx context.Context,
-	req *types.QueryTotalSupplyRequest) (*types.QueryTotalSupplyResponse, error) {
+	req *banktypes.QueryTotalSupplyRequest) (*banktypes.QueryTotalSupplyResponse, error) {
 	return k.k.TotalSupply(ctx, req)
 }
 func (k BankKeeperWrapper) SupplyOf(ctx context.Context,
-	req *types.QuerySupplyOfRequest) (*types.QuerySupplyOfResponse, error) {
+	req *banktypes.QuerySupplyOfRequest) (*banktypes.QuerySupplyOfResponse, error) {
 	return k.k.SupplyOf(ctx, req)
 }
 func (k BankKeeperWrapper) Params(ctx context.Context,
-	req *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
+	req *banktypes.QueryParamsRequest) (*banktypes.QueryParamsResponse, error) {
 	return k.k.Params(ctx, req)
 }

@@ -8,12 +8,16 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
     // this line is used by starport scaffolding # 2
+cdc.RegisterConcrete(MsgContractTransferRecord{}, "flares/CreateContractTransferRecord", nil)
 cdc.RegisterConcrete(MsgBoard{}, "flares/CreateBoard", nil)
 cdc.RegisterConcrete(MsgContract{}, "flares/CreateContract", nil)
 } 
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
     // this line is used by starport scaffolding # 3
+registry.RegisterImplementations((*sdk.Msg)(nil),
+	&MsgContractTransferRecord{},
+)
 registry.RegisterImplementations((*sdk.Msg)(nil),
 	&MsgBoard{},
 )

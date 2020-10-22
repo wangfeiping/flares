@@ -27,3 +27,7 @@ const (
 	ContractTransferKey = "Transfer"
 	BoardKey            = "Board"
 )
+
+const (
+	ContractTransferRecordKey= "ContractTransferRecord"
+)

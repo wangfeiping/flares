@@ -47,6 +47,9 @@ $ cd flares/
 $ starport type contract key receiver accept durationHeight bottom \
     --module flares --sdk-version stargate
 
+$ starport type contractTransferRecord hash from to amount \
+    --module flares --sdk-version stargate
+
 $ starport type board base baseDenom baseAddress \
     accept acceptDenom acceptAddress \
     source \

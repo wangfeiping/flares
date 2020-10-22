@@ -15,10 +15,10 @@ func (k Keeper) CreateContractTransferRecord(ctx sdk.Context,
 	store := k.getContractTransferStore(ctx, record.To)
 
 	bz := sha256.Sum256(ctx.TxBytes())
-	hash := hex.EncodeToString(bz[:])
+	record.Hash = hex.EncodeToString(bz[:])
 	data := k.cdc.MustMarshalBinaryBare(&record)
 
-	store.Set(types.KeyPrefix(hash), data)
+	store.Set(types.KeyPrefix(record.Hash), data)
 
 	return
 }

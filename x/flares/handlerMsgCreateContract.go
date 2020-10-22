@@ -8,7 +8,9 @@ import (
 )
 
 func handleMsgCreateContract(ctx sdk.Context, k keeper.Keeper, contract *types.MsgContract) (*sdk.Result, error) {
-	k.CreateContract(ctx, *contract)
+	if err := k.CreateContract(ctx, *contract); err != nil {
+		return nil, err
+	}
 
 	return &sdk.Result{Events: ctx.EventManager().ABCIEvents()}, nil
 }

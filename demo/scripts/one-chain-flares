@@ -40,7 +40,7 @@ fi
 
 echo "Creating flaresd instance with home=$CHAINDIR chain-id=$CHAINID p2p=:$P2PPORT rpc=:$RPCPORT..."
 # Build genesis file incl account for passed address
-coins="100000000000stake,100000000000samoleans"
+coins="100000000000base,100000000000accept,100000000000abc,100000000000stake,100000000000samoleans"
 flaresd --home $CHAINDIR/$CHAINID --chain-id $CHAINID init $CHAINID &> /dev/null
 flaresd --home $CHAINDIR/$CHAINID keys add validator --keyring-backend="test" > $CHAINDIR/$CHAINID/validator_seed.json 2> /dev/null
 flaresd --home $CHAINDIR/$CHAINID keys add user --keyring-backend="test" --output json > $CHAINDIR/$CHAINID/key_seed.json 2> /dev/null

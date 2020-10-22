@@ -5,20 +5,34 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/wangfeiping/flares/x/flares/types"
 )
 
-func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) {
+var (
+	ErrContractExists = sdkerrors.Register(types.ModuleName, 10001, "contract already exists")
+)
+
+func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) error {
 	store := k.getContractStore(ctx)
-	key := fmt.Sprintf("%s-%s-%s-%s", types.ContractKey,
-		contract.Creator.String(), contract.Key, contract.Id)
-	contract.Receiver = AccAddressString(types.ModuleName, key).String()
+	contractKey := fmt.Sprintf("%s-%s", types.ContractKey, contract.Key)
+	contract.Receiver = AccAddressString(types.ModuleName,
+		fmt.Sprintf("%s%s", contractKey, contract.Id)).String()
+
+	if store.Has(types.KeyPrefix(contractKey)) {
+		ctx.Logger().With("module", types.ModuleName).
+			Error(ErrContractExists.Error(), ": ", contractKey)
+		return ErrContractExists
+	}
 
 	b := k.cdc.MustMarshalBinaryBare(&contract)
-	store.Set(types.KeyPrefix(key), b)
+	store.Set(types.KeyPrefix(contractKey), b)
 
 	k.getContractReceiverStore(ctx).
-		Set(types.KeyPrefix(contract.Receiver), []byte(key))
+		Set(types.KeyPrefix(contract.Receiver), []byte(contractKey))
+
+	return nil
 }
 
 func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {

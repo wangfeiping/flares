@@ -25,7 +25,8 @@ const (
 	ContractKey         = "Contract"
 	ContractReceiverKey = "Receiver"
 	ContractTransferKey = "Transfer"
-	ClosedContractKey   = "ClosedContract"
+	SuccessContractKey  = "SuccessContract"
+	FailContractKey     = "FailContract"
 	BoardKey            = "Board"
 )
 

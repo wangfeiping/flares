@@ -2,8 +2,8 @@ package keeper
 
 import (
 	"context"
+	"strings"
 
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/wangfeiping/flares/x/flares/types"
@@ -19,16 +19,18 @@ func (k Keeper) AllContract(c context.Context, req *types.QueryAllContractReques
 	var contracts []*types.MsgContract
 	ctx := sdk.UnwrapSDKContext(c)
 
-	store := ctx.KVStore(k.storeKey)
-	contractStore := prefix.NewStore(store, types.KeyPrefix(types.ContractKey))
+	contractStore := k.getContractStore(ctx)
 
 	pageRes, err := query.Paginate(contractStore, req.Pagination, func(key []byte, value []byte) error {
 		var contract types.MsgContract
 		if err := k.cdc.UnmarshalBinaryBare(value, &contract); err != nil {
 			return err
 		}
-
-		contracts = append(contracts, &contract)
+		if (strings.EqualFold(req.State, "success") && strings.EqualFold(contract.Result, "success")) ||
+			(strings.EqualFold(req.State, "fail") && contract.Code != 0) ||
+			((req.State == "" || strings.EqualFold(req.State, "pending")) && contract.Result == "") {
+			contracts = append(contracts, &contract)
+		}
 		return nil
 	})
 

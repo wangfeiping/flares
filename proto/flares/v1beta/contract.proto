@@ -15,4 +15,6 @@ message MsgContract {
   int32 durationHeight = 7; 
   string bottom = 8; 
   fixed64 height = 9; 
+  uint32 code = 10; 
+  string result = 11; 
 }

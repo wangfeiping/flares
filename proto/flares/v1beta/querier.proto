@@ -37,7 +37,8 @@ message QueryAllBoardResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 message QueryAllContractRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+	string state = 1; 
+	cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 
 message QueryAllContractResponse {

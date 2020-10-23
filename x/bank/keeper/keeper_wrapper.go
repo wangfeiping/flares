@@ -8,6 +8,7 @@ import (
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
+	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/wangfeiping/flares/x/flares/keeper"
 	"github.com/wangfeiping/flares/x/flares/types"
@@ -26,6 +27,10 @@ func NewBankKeeperWrapper(bankKeeper bank.Keeper, flaresK keeper.Keeper) bank.Ke
 		flaresKeeper: flaresK}
 }
 
+func (k BankKeeperWrapper) Logger(ctx sdk.Context) log.Logger {
+	return ctx.Logger().With("module", "flares/x/bank")
+}
+
 // github.com/cosmos/cosmos-sdk/x/bank/keeper.SendKeeper interface
 
 func (k BankKeeperWrapper) InputOutputCoins(ctx sdk.Context,
@@ -33,7 +38,7 @@ func (k BankKeeperWrapper) InputOutputCoins(ctx sdk.Context,
 	if err := k.Keeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
 		return err
 	}
-	ctx.Logger().With("module", "flares/x/bank").
+	k.Logger(ctx).
 		Info("transfer: InputOutputCoins", "height", ctx.BlockHeight())
 	return nil
 }
@@ -52,20 +57,18 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 			To:     toAddr.String(),
 			Amount: amt.String()}
 		k.flaresKeeper.CreateContractTransferRecord(ctx, rec)
-		ctx.Logger().With("module", "flares/x/bank").
+		k.Logger(ctx).
 			Info("SendCoins to a flares contract",
 				"height", ctx.BlockHeight(), "receiver", toAddr.String())
 		// check to see if the lowest price is met.
-		contract, err := k.flaresKeeper.GetContract(ctx, string(ck))
+		c, err := k.flaresKeeper.GetContract(ctx, string(ck))
 		if err != nil {
 			return err
 		}
-		if !contract.IsAuctions() {
+		if !c.IsAuctions() {
 			// it is traded
-			// TODO contract clearing
-			ctx.Logger().With("module", types.ModuleName).
-				Info("contract clearing",
-					"height", ctx.BlockHeight(), "contract", contract.Key)
+			// contract clearing
+			k.flaresKeeper.ClearingContract(ctx, "flares/x/bank", &c)
 		}
 	}
 	return nil
@@ -83,7 +86,7 @@ func (k BankKeeperWrapper) SendCoinsFromModuleToAccount(ctx sdk.Context,
 		if k.flaresKeeper.CheckContractReceiver(ctx, recipientAddr) != nil {
 			// Because this function can not get the sending address,
 			// so it's not allowed to IBC transfer to a contract receiver address.
-			ctx.Logger().With("module", "flares/x/bank").
+			k.Logger(ctx).
 				Error("IBC transfer: it's not allowed to IBC transfer to a contract receiver address",
 					"height", ctx.BlockHeight(), "receiver", recipientAddr.String())
 			err := fmt.Errorf("IBC transfer: %s: height=%s, receiver=%s",

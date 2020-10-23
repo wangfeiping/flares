@@ -8,10 +8,12 @@ import (
 
 var _ sdk.Msg = &MsgContract{}
 
-func NewMsgContract(creator sdk.AccAddress, key string, receiver string, accept string, durationHeight int32, bottom string) *MsgContract {
+func NewMsgContract(creator sdk.AccAddress,
+	module, key, receiver, accept string, durationHeight int32, bottom string) *MsgContract {
 	return &MsgContract{
 		Id:             uuid.New().String(),
 		Creator:        creator,
+		Module:         module,
 		Key:            key,
 		Receiver:       receiver,
 		Accept:         accept,

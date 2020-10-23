@@ -16,6 +16,7 @@ var _ = strconv.Itoa(42)
 
 type createContractRequest struct {
 	BaseReq        rest.BaseReq `json:"base_req"`
+	Module         string       `json:"module"`
 	Creator        string       `json:"creator"`
 	Key            string       `json:"key"`
 	Receiver       string       `json:"receiver"`
@@ -43,18 +44,16 @@ func createContractHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
+		module := req.Module
 		parsedKey := req.Key
-
 		parsedReceiver := req.Receiver
-
 		parsedAccept := req.Accept
-
 		parsedDurationHeight := req.DurationHeight
-
 		parsedBottom := req.Bottom
 
 		msg := types.NewMsgContract(
 			creator,
+			module,
 			parsedKey,
 			parsedReceiver,
 			parsedAccept,

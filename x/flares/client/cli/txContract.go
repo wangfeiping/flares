@@ -13,18 +13,19 @@ import (
 
 func CmdCreateContract() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-contract [key] [receiver] [accept] [durationHeight] [bottom]",
+		Use:   "create-contract [module] [key] [receiver] [accept] [durationHeight] [bottom]",
 		Short: "Creates a new contract",
-		Args:  cobra.MinimumNArgs(5),
+		Args:  cobra.MinimumNArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsKey := string(args[0])
-			argsReceiver := string(args[1])
-			argsAccept := string(args[2])
-			argsDurationHeight, err := strconv.Atoi(args[3])
+			module := args[0]
+			argsKey := string(args[1])
+			argsReceiver := string(args[2])
+			argsAccept := string(args[3])
+			argsDurationHeight, err := strconv.Atoi(args[4])
 			if err != nil {
 				return err
 			}
-			argsBottom := string(args[4])
+			argsBottom := string(args[5])
 
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			clientCtx, err = client.ReadTxCommandFlags(clientCtx, cmd.Flags())
@@ -33,7 +34,7 @@ func CmdCreateContract() *cobra.Command {
 			}
 
 			msg := types.NewMsgContract(clientCtx.GetFromAddress(),
-				string(argsKey), string(argsReceiver), string(argsAccept),
+				module, string(argsKey), string(argsReceiver), string(argsAccept),
 				int32(argsDurationHeight), string(argsBottom))
 			if err := msg.ValidateBasic(); err != nil {
 				return err

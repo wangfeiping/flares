@@ -21,10 +21,8 @@ func BeginBlockHandle(ctx sdk.Context, req abci.RequestBeginBlock,
 				ctx.Logger().With("module", types.ModuleName).
 					Info("contract expires", "height", ctx.BlockHeight())
 				// the highest price is traded.
-				// TODO contract clearing
-				ctx.Logger().With("module", types.ModuleName).
-					Info("contract clearing",
-						"height", ctx.BlockHeight(), "contract", c.Key)
+				// contract clearing
+				k.ClearingContract(ctx, types.ModuleName, &c)
 			}
 		}
 	}

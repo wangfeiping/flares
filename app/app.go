@@ -314,7 +314,8 @@ func New(
 	app.EvidenceKeeper = *evidenceKeeper
 
 	app.NameServiceKeeper = *nskeeper.NewKeeper(
-		appCodec, keys[nstypes.StoreKey], keys[nstypes.MemStoreKey])
+		appCodec, keys[nstypes.StoreKey], keys[nstypes.MemStoreKey],
+		app.flaresKeeper)
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// NOTE: Any module instantiated in the module manager that is later modified

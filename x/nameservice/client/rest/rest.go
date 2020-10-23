@@ -17,9 +17,6 @@ func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(clientCtx, r)
 	registerTxHandlers(clientCtx, r)
 
-	registerQueryRoutes(clientCtx, r)
-	registerTxHandlers(clientCtx, r)
-
 }
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {

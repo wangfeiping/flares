@@ -8,10 +8,11 @@ import "gogoproto/gogo.proto";
 message MsgContract {
   string id = 1;
   bytes creator = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-  string key = 3; 
-  string receiver = 4; 
-  string accept = 5; 
-  int32 durationHeight = 6; 
-  string bottom = 7; 
-  fixed64 height = 8; 
+  string module = 3;
+  string key = 4; 
+  string receiver = 5; 
+  string accept = 6; 
+  int32 durationHeight = 7; 
+  string bottom = 8; 
+  fixed64 height = 9; 
 }

@@ -10,10 +10,18 @@ import (
 	"github.com/wangfeiping/flares/x/flares/types"
 )
 
+type ContractClearing func(ctx sdk.Context, msg types.MsgContract) bool
+
 var (
 	ErrContractExists   = sdkerrors.Register(types.ModuleName, 10001, "contract already exists")
 	ErrContractNotFound = sdkerrors.Register(types.ModuleName, 10002, "contract not found")
+
+	cacheContractClearings map[string]ContractClearing = make(map[string]ContractClearing, 0)
 )
+
+func (k Keeper) RegisterContractClearing(module string, cc ContractClearing) {
+	cacheContractClearings[module] = cc
+}
 
 func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) error {
 	store := k.getContractStore(ctx)
@@ -36,6 +44,30 @@ func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) erro
 		Set(types.KeyPrefix(contract.Receiver), []byte(contractKey))
 
 	return nil
+}
+
+func (k Keeper) ClearingContract(ctx sdk.Context,
+	moduleName string, msg *types.MsgContract) {
+	contractClearing := cacheContractClearings[msg.Module]
+	if contractClearing == nil {
+		ctx.Logger().With("module", moduleName).
+			Error("ContractClearing not found",
+				"height", ctx.BlockHeight(),
+				"module", msg.Module, "contract", msg.Key)
+		return
+	}
+	if contractClearing(ctx, *msg) {
+		ctx.Logger().With("module", moduleName).
+			Info("the contract clearing was successful",
+				"height", ctx.BlockHeight(),
+				"module", msg.Module, "contract", msg.Key)
+		return
+	}
+	ctx.Logger().With("module", moduleName).
+		Error("the contract clearing was failed",
+			"height", ctx.BlockHeight(),
+			"module", msg.Module, "contract", msg.Key)
+
 }
 
 func (k Keeper) GetContract(ctx sdk.Context,

@@ -1,13 +1,9 @@
 package keeper
 
 import (
-	"fmt"
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	ibctypes "github.com/cosmos/cosmos-sdk/x/ibc/applications/transfer/types"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/wangfeiping/flares/x/flares/keeper"
@@ -48,7 +44,7 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 		return err
 	}
 	// Check if the address belongs to a contract.
-	if ck := k.flaresKeeper.CheckContractReceiver(ctx, toAddr); ck != nil {
+	if ck := k.flaresKeeper.CheckContractReceiver(ctx, toAddr.String()); ck != nil {
 		// TODO check contract bottom
 
 		// stores the record of transfer
@@ -69,30 +65,6 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 			// it is traded
 			// contract clearing
 			k.flaresKeeper.ClearingContract(ctx, "flares/x/bank", &c)
-		}
-	}
-	return nil
-}
-
-// github.com/cosmos/cosmos-sdk/x/bank/keeper.Keeper interface
-
-func (k BankKeeperWrapper) SendCoinsFromModuleToAccount(ctx sdk.Context,
-	senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
-	if err := k.Keeper.SendCoinsFromModuleToAccount(ctx, senderModule, recipientAddr, amt); err != nil {
-		return err
-	}
-	if strings.EqualFold(senderModule, ibctypes.ModuleName) {
-		// Check if the address belongs to a contract.
-		if k.flaresKeeper.CheckContractReceiver(ctx, recipientAddr) != nil {
-			// Because this function can not get the sending address,
-			// so it's not allowed to IBC transfer to a contract receiver address.
-			k.Logger(ctx).
-				Error("IBC transfer: it's not allowed to IBC transfer to a contract receiver address",
-					"height", ctx.BlockHeight(), "receiver", recipientAddr.String())
-			err := fmt.Errorf("IBC transfer: %s: height=%s, receiver=%s",
-				"it's not allowed to IBC transfer to a contract receiver address",
-				ctx.BlockHeight(), recipientAddr.String())
-			return err
 		}
 	}
 	return nil

@@ -128,9 +128,9 @@ func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
 	return
 }
 
-func (k Keeper) CheckContractReceiver(ctx sdk.Context, addr sdk.AccAddress) []byte {
+func (k Keeper) CheckContractReceiver(ctx sdk.Context, accAddr string) []byte {
 	return k.getContractReceiverStore(ctx).
-		Get(types.KeyPrefix(addr.String()))
+		Get(types.KeyPrefix(accAddr))
 }
 
 func BuildContractKey(contract *types.MsgContract) string {

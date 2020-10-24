@@ -80,6 +80,8 @@ import (
 	flareskeeper "github.com/wangfeiping/flares/x/flares/keeper"
 	flarestypes "github.com/wangfeiping/flares/x/flares/types"
 
+	// flaresibc "github.com/wangfeiping/flares/x/ibc/keeper"
+
 	"github.com/wangfeiping/flares/x/nameservice"
 	nskeeper "github.com/wangfeiping/flares/x/nameservice/keeper"
 	nstypes "github.com/wangfeiping/flares/x/nameservice/types"
@@ -115,6 +117,7 @@ var (
 		transfer.AppModuleBasic{},
 		flares.AppModuleBasic{},
 
+		// demos
 		nameservice.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
@@ -299,6 +302,8 @@ func New(
 		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
 		app.AccountKeeper, app.BankKeeper, scopedTransferKeeper,
 	)
+	// app.TransferKeeper = flaresibc.NewIBCTransferKeeperWrapper(app.TransferKeeper, app.flaresKeeper)
+
 	transferModule := transfer.NewAppModule(app.TransferKeeper)
 
 	// Create static IBC router, add transfer route, then set and seal it

@@ -13,11 +13,6 @@ import (
 type ContractClearing func(ctx sdk.Context, msg types.MsgContract) bool
 
 var (
-	ErrContractExists           = sdkerrors.Register(types.ModuleName, 10001, "contract already exists")
-	ErrContractNotFound         = sdkerrors.Register(types.ModuleName, 10002, "contract not found")
-	ErrContractClearingNotFound = sdkerrors.Register(types.ModuleName, 10003, "contract-clearing not found")
-	ErrContractClearingFailed   = sdkerrors.Register(types.ModuleName, 10004, "contract-clearing was failed")
-
 	cacheContractClearings map[string]ContractClearing = make(map[string]ContractClearing, 0)
 )
 
@@ -31,8 +26,8 @@ func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) erro
 
 	if store.Has(types.KeyPrefix(contractKey)) {
 		k.Logger(ctx).
-			Error(ErrContractExists.Error(), ": ", contractKey)
-		return ErrContractExists
+			Error(types.ErrContractExists.Error(), ": ", contractKey)
+		return types.ErrContractExists
 	}
 
 	contract.Receiver = AccAddressString(types.ModuleName,
@@ -79,11 +74,11 @@ func (k Keeper) ClearingContract(ctx sdk.Context,
 	contractClearing := cacheContractClearings[msg.Module]
 	if contractClearing == nil {
 		ctx.Logger().With("module", moduleName).
-			Error(ErrContractClearingNotFound.Error(),
+			Error(types.ErrContractClearingNotFound.Error(),
 				"height", ctx.BlockHeight(),
 				"module", msg.Module, "contract", msg.Key)
-		k.closeContract(ctx, msg, ErrContractClearingNotFound)
-		return ErrContractClearingNotFound
+		k.closeContract(ctx, msg, types.ErrContractClearingNotFound)
+		return types.ErrContractClearingNotFound
 	}
 	if contractClearing(ctx, *msg) {
 		ctx.Logger().With("module", moduleName).
@@ -94,11 +89,20 @@ func (k Keeper) ClearingContract(ctx sdk.Context,
 		return nil
 	}
 	ctx.Logger().With("module", moduleName).
-		Error(ErrContractClearingFailed.Error(),
+		Error(types.ErrContractClearingFailed.Error(),
 			"height", ctx.BlockHeight(),
 			"module", msg.Module, "contract", msg.Key)
-	k.closeContract(ctx, msg, ErrContractClearingFailed)
-	return ErrContractClearingFailed
+	k.closeContract(ctx, msg, types.ErrContractClearingFailed)
+	return types.ErrContractClearingFailed
+}
+
+// CheckContractBottom do some checks:
+// check contract bottom
+// check if the base price is met.
+func (k Keeper) CheckContractBottom(msg *types.MsgContract, amount sdk.Coin) error {
+
+	// return types.ErrInvalidAmount
+	return nil
 }
 
 func (k Keeper) GetContract(ctx sdk.Context,
@@ -110,7 +114,7 @@ func (k Keeper) GetContract(ctx sdk.Context,
 		k.cdc.MustUnmarshalBinaryBare(bz, &msg)
 		return msg, nil
 	}
-	return msg, ErrContractNotFound
+	return msg, types.ErrContractNotFound
 }
 
 func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {

@@ -32,8 +32,6 @@ func (k IBCTransferKeeperWrapper) OnRecvPacket(ctx sdk.Context,
 	}
 	// Check if the address belongs to a contract.
 	if ck := k.flaresKeeper.CheckContractReceiver(ctx, data.Receiver); ck != nil {
-		// TODO check contract bottom
-
 		coin := sdk.NewInt64Coin(data.Denom, int64(data.Amount))
 		// stores the record of transfer
 		rec := types.MsgContractTransferRecord{
@@ -44,14 +42,14 @@ func (k IBCTransferKeeperWrapper) OnRecvPacket(ctx sdk.Context,
 		k.Logger(ctx).
 			Info("IBC transfer to a flares contract",
 				"height", ctx.BlockHeight(), "receiver", data.Receiver)
-		// check to see if the lowest price is met.
 		c, err := k.flaresKeeper.GetContract(ctx, string(ck))
 		if err != nil {
 			return err
 		}
 		if !c.IsAuctions() {
-			// it is traded
 			// contract clearing
+			// check contract bottom
+			// check if the base price is met
 			k.flaresKeeper.ClearingContract(ctx, ModuleName, &c)
 		}
 	}

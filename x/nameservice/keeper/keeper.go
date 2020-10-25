@@ -38,6 +38,29 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-func (k Keeper) ContractClearing(ctx sdk.Context, msg flarestypes.MsgContract) bool {
+func (k Keeper) ContractClearing(ctx sdk.Context,
+	contract flarestypes.MsgContract) bool {
+	recs := k.flareskeeper.GetContractTransfers(ctx, contract.Receiver)
+	if len(recs) <= 0 {
+		return false
+	}
+	// check board & compare
+	max := recs[0]
+	k.flareskeeper.CheckBoard(contract, &max)
+	for record := range recs[1:] {
+		k.flareskeeper.CheckBoard(contract, &record)
+		if record > max {
+			k.flareskeeper.Return(contract, max)
+			max = record
+		}
+	}
+
+	// check base price
+	// TODO maybe it needs to be exchanged
+
+	// transfer/send
+	k.flareskeeper.Deal(contract, max)
+	// set the owner of name
+
 	return true
 }

@@ -45,8 +45,11 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 	}
 	// Check if the address belongs to a contract.
 	if ck := k.flaresKeeper.CheckContractReceiver(ctx, toAddr.String()); ck != nil {
-		// TODO check contract bottom
-
+		// get the contract
+		c, err := k.flaresKeeper.GetContract(ctx, string(ck))
+		if err != nil {
+			return err
+		}
 		// stores the record of transfer
 		rec := types.MsgContractTransferRecord{
 			From:   fromAddr.String(),
@@ -56,14 +59,10 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 		k.Logger(ctx).
 			Info("SendCoins to a flares contract",
 				"height", ctx.BlockHeight(), "receiver", toAddr.String())
-		// check to see if the lowest price is met.
-		c, err := k.flaresKeeper.GetContract(ctx, string(ck))
-		if err != nil {
-			return err
-		}
 		if !c.IsAuctions() {
-			// it is traded
 			// contract clearing
+			// check contract bottom
+			// check if the base price is met
 			k.flaresKeeper.ClearingContract(ctx, "flares/x/bank", &c)
 		}
 	}

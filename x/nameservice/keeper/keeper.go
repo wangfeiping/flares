@@ -46,11 +46,14 @@ func (k Keeper) ContractClearing(ctx sdk.Context,
 	}
 	// check board & compare
 	max := recs[0]
-	k.flareskeeper.CheckBoard(contract, &max)
-	for record := range recs[1:] {
-		k.flareskeeper.CheckBoard(contract, &record)
-		if record > max {
-			k.flareskeeper.Return(contract, max)
+	k.flareskeeper.CheckBoard(ctx, &contract, &max)
+	for _, record := range recs[1:] {
+		k.flareskeeper.CheckBoard(ctx, &contract, &record)
+		if record.Voucher > max.Voucher {
+			if err := k.flareskeeper.Return(ctx, &contract, &max); err != nil {
+				k.Logger(ctx).Error("contract return failed: ", err.Error())
+				return false
+			}
 			max = record
 		}
 	}
@@ -59,8 +62,14 @@ func (k Keeper) ContractClearing(ctx sdk.Context,
 	// TODO maybe it needs to be exchanged
 
 	// transfer/send
-	k.flareskeeper.Deal(contract, max)
+	if err := k.flareskeeper.Deal(ctx, &contract, &max); err != nil {
+		k.Logger(ctx).Error("contract deal failed: ", err.Error())
+		return false
+	}
 	// set the owner of name
-
+	whois := types.MsgWhois{
+		Owner: max.From,
+		Value: contract.Key}
+	k.CreateWhois(ctx, whois)
 	return true
 }

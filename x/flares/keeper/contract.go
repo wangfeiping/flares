@@ -105,6 +105,16 @@ func (k Keeper) CheckContractBottom(msg *types.MsgContract, amount sdk.Coin) err
 	return nil
 }
 
+func (k Keeper) Return(ctx sdk.Context,
+	contract *types.MsgContract, record *types.MsgContractTransferRecord) error {
+	return nil
+}
+
+func (k Keeper) Deal(ctx sdk.Context,
+	contract *types.MsgContract, record *types.MsgContractTransferRecord) error {
+	return nil
+}
+
 func (k Keeper) GetContract(ctx sdk.Context,
 	contractKey string) (types.MsgContract, error) {
 	store := k.getContractStore(ctx)

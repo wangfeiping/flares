@@ -40,7 +40,7 @@ type MsgContract struct {
 	Result         string                                        `protobuf:"bytes,11,opt,name=result,proto3" json:"result,omitempty"`
 }
 
-func (m *MsgContract) IsAuctions() bool { return m.DurationHeight >= 0 }
+func (m *MsgContract) IsAuctions() bool { return m.DurationHeight > 0 }
 
 func (m *MsgContract) Reset()         { *m = MsgContract{} }
 func (m *MsgContract) String() string { return proto.CompactTextString(m) }

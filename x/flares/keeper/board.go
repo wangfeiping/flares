@@ -22,6 +22,12 @@ func (k Keeper) CreateBoard(ctx sdk.Context, board types.MsgBoard) {
 	store.Set(types.KeyPrefix(key), b)
 }
 
+func (k Keeper) CheckBoard(ctx sdk.Context,
+	contract *types.MsgContract, record *types.MsgContractTransferRecord) {
+	// TODO board logic: value discover
+	record.Voucher = 100
+}
+
 func (k Keeper) GetAllBoard(ctx sdk.Context) (msgs []types.MsgBoard) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.BoardKey))
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyPrefix(types.BoardKey))

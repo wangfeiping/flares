@@ -82,9 +82,15 @@ import (
 
 	// flaresibc "github.com/wangfeiping/flares/x/ibc/keeper"
 
+	// demos
+
 	"github.com/wangfeiping/flares/x/nameservice"
 	nskeeper "github.com/wangfeiping/flares/x/nameservice/keeper"
 	nstypes "github.com/wangfeiping/flares/x/nameservice/types"
+
+	"github.com/wangfeiping/flares/x/sealedmonsters"
+	sealedkeeper "github.com/wangfeiping/flares/x/sealedmonsters/keeper"
+	sealedtypes "github.com/wangfeiping/flares/x/sealedmonsters/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -119,6 +125,7 @@ var (
 
 		// demos
 		nameservice.AppModuleBasic{},
+		sealedmonsters.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -178,8 +185,11 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
-	flaresKeeper      flareskeeper.Keeper
-	NameServiceKeeper nskeeper.Keeper
+	flaresKeeper flareskeeper.Keeper
+
+	// demos
+	NameServiceKeeper    nskeeper.Keeper
+	SealedMonstersKeeper sealedkeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -209,7 +219,10 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		flarestypes.StoreKey,
+
+		// demos
 		nstypes.StoreKey,
+		sealedtypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -318,9 +331,13 @@ func New(
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
 
+	// demos
+
 	app.NameServiceKeeper = *nskeeper.NewKeeper(
 		appCodec, keys[nstypes.StoreKey], keys[nstypes.MemStoreKey],
 		app.flaresKeeper)
+	app.SealedMonstersKeeper = *sealedkeeper.NewKeeper(
+		appCodec, keys[nstypes.StoreKey], keys[nstypes.MemStoreKey])
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// NOTE: Any module instantiated in the module manager that is later modified
@@ -347,7 +364,10 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		flares.NewAppModule(appCodec, app.flaresKeeper),
+
+		// demos
 		nameservice.NewAppModule(appCodec, app.NameServiceKeeper),
+		sealedmonsters.NewAppModule(appCodec, app.SealedMonstersKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 

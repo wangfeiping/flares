@@ -59,7 +59,7 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 		k.Logger(ctx).
 			Info("SendCoins to a flares contract",
 				"height", ctx.BlockHeight(), "receiver", toAddr.String())
-		if !c.IsAuctions() {
+		if k.flaresKeeper.IsPayment(&c) {
 			// contract clearing
 			// check contract bottom
 			// check if the base price is met

@@ -46,7 +46,6 @@ func createContractHandler(clientCtx client.Context) http.HandlerFunc {
 
 		module := req.Module
 		parsedKey := req.Key
-		parsedReceiver := req.Receiver
 		parsedAccept := req.Accept
 		parsedDurationHeight := req.DurationHeight
 		parsedBottom := req.Bottom
@@ -55,7 +54,6 @@ func createContractHandler(clientCtx client.Context) http.HandlerFunc {
 			creator,
 			module,
 			parsedKey,
-			parsedReceiver,
 			parsedAccept,
 			parsedDurationHeight,
 			parsedBottom,

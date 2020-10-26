@@ -13,19 +13,18 @@ import (
 
 func CmdCreateContract() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-contract [module] [key] [receiver] [accept] [durationHeight] [bottom]",
+		Use:   "create-contract [module] [key] [accept] [durationHeight] [bottom]",
 		Short: "Creates a new contract",
-		Args:  cobra.MinimumNArgs(6),
+		Args:  cobra.MinimumNArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			module := args[0]
 			argsKey := string(args[1])
-			argsReceiver := string(args[2])
-			argsAccept := string(args[3])
-			argsDurationHeight, err := strconv.Atoi(args[4])
+			argsAccept := string(args[2])
+			argsDurationHeight, err := strconv.Atoi(args[3])
 			if err != nil {
 				return err
 			}
-			argsBottom := string(args[5])
+			argsBottom := string(args[4])
 
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			clientCtx, err = client.ReadTxCommandFlags(clientCtx, cmd.Flags())
@@ -34,7 +33,7 @@ func CmdCreateContract() *cobra.Command {
 			}
 
 			msg := types.NewMsgContract(clientCtx.GetFromAddress(),
-				module, string(argsKey), string(argsReceiver), string(argsAccept),
+				module, string(argsKey), string(argsAccept),
 				int32(argsDurationHeight), string(argsBottom))
 			if err := msg.ValidateBasic(); err != nil {
 				return err

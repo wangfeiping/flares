@@ -12,6 +12,5 @@ message MsgMonster {
   string solutionHash = 4; 
   string reward = 5; 
   string solution = 6; 
-  string scavenger = 7; 
 }
 

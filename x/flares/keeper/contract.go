@@ -20,11 +20,22 @@ func (k Keeper) RegisterContractClearing(module string, cc ContractClearing) {
 	cacheContractClearings[module] = cc
 }
 
-func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) error {
+func (k Keeper) IsPayment(contract *types.MsgContract) bool {
+	return contract.DurationHeight == 0
+}
+
+func (k Keeper) IsAuctions(contract *types.MsgContract) bool {
+	return contract.DurationHeight > 0
+}
+
+func (k Keeper) CreateContract(ctx sdk.Context, contract *types.MsgContract) error {
 	store := k.getContractStore(ctx)
-	contractKey := BuildContractKey(&contract)
+	contractKey := BuildContractKey(contract)
 
 	if store.Has(types.KeyPrefix(contractKey)) {
+		if bz := store.Get(types.KeyPrefix(contractKey)); bz != nil {
+			k.cdc.MustUnmarshalBinaryBare(bz, contract)
+		}
 		k.Logger(ctx).
 			Error(types.ErrContractExists.Error(), ": ", contractKey)
 		return types.ErrContractExists
@@ -33,7 +44,7 @@ func (k Keeper) CreateContract(ctx sdk.Context, contract types.MsgContract) erro
 	contract.Receiver = AccAddressString(types.ModuleName,
 		fmt.Sprintf("%s%s", contractKey, contract.Id)).String()
 	contract.Height = uint64(ctx.BlockHeight())
-	bz := k.cdc.MustMarshalBinaryBare(&contract)
+	bz := k.cdc.MustMarshalBinaryBare(contract)
 
 	// create the contract
 	store.Set(types.KeyPrefix(contractKey), bz)

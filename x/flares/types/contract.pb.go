@@ -6,13 +6,12 @@ package types
 import (
 	encoding_binary "encoding/binary"
 	fmt "fmt"
-	io "io"
-	math "math"
-	math_bits "math/bits"
-
 	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -39,8 +38,6 @@ type MsgContract struct {
 	Code           uint32                                        `protobuf:"varint,10,opt,name=code,proto3" json:"code,omitempty"`
 	Result         string                                        `protobuf:"bytes,11,opt,name=result,proto3" json:"result,omitempty"`
 }
-
-func (m *MsgContract) IsAuctions() bool { return m.DurationHeight > 0 }
 
 func (m *MsgContract) Reset()         { *m = MsgContract{} }
 func (m *MsgContract) String() string { return proto.CompactTextString(m) }

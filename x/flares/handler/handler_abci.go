@@ -18,7 +18,7 @@ func BeginBlockHandle(ctx sdk.Context, req abci.RequestBeginBlock,
 			"height", ctx.BlockHeight(),
 			"contracts", len(contracts))
 	for _, c := range contracts {
-		if c.IsAuctions() {
+		if k.IsAuctions(&c) {
 			if uint64(ctx.BlockHeight()) >= c.Height+uint64(c.DurationHeight) {
 				ctx.Logger().With("module", types.ModuleName).
 					Info("contract expires", "height", ctx.BlockHeight())

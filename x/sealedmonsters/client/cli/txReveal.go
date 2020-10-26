@@ -11,13 +11,11 @@ import (
 
 func CmdCreateReveal() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-reveal [solutionHash] [solution] [scavenger]",
+		Use:   "create-reveal [solution]",
 		Short: "Creates a new reveal",
-		Args:  cobra.MinimumNArgs(2),
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsSolutionHash := string(args[0])
-			argsSolution := string(args[1])
-			argsScavenger := string(args[2])
+			argsSolution := string(args[0])
 
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
@@ -25,7 +23,7 @@ func CmdCreateReveal() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgReveal(clientCtx.GetFromAddress(), string(argsSolutionHash), string(argsSolution), string(argsScavenger))
+			msg := types.NewMsgReveal(clientCtx.GetFromAddress(), string(argsSolution))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

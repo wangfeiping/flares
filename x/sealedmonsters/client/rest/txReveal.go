@@ -41,17 +41,11 @@ func createRevealHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		parsedSolutionHash := req.SolutionHash
-
 		parsedSolution := req.Solution
-
-		parsedScavenger := req.Scavenger
 
 		msg := types.NewMsgReveal(
 			creator,
-			parsedSolutionHash,
 			parsedSolution,
-			parsedScavenger,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

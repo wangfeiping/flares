@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/wangfeiping/flares/x/sealedmonsters/types"
@@ -8,8 +10,9 @@ import (
 
 func (k Keeper) CreateReveal(ctx sdk.Context, reveal types.MsgReveal) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevealKey))
+	key := types.KeyPrefix(fmt.Sprintf("%s-%s", types.RevealKey, reveal.Id))
 	b := k.cdc.MustMarshalBinaryBare(&reveal)
-	store.Set(types.KeyPrefix(types.RevealKey), b)
+	store.Set(key, b)
 }
 
 func (k Keeper) GetAllReveal(ctx sdk.Context) (msgs []types.MsgReveal) {

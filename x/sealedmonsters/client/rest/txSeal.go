@@ -20,6 +20,7 @@ type createSealRequest struct {
 	SolutionHash          string       `json:"solutionHash"`
 	SolutionScavengerHash string       `json:"solutionScavengerHash"`
 	Scavenger             string       `json:"scavenger"`
+	Amount                string       `json:"amount"`
 }
 
 func createSealHandler(clientCtx client.Context) http.HandlerFunc {
@@ -41,17 +42,10 @@ func createSealHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		parsedSolutionHash := req.SolutionHash
-
-		parsedSolutionScavengerHash := req.SolutionScavengerHash
-
-		parsedScavenger := req.Scavenger
-
 		msg := types.NewMsgSeal(
 			creator,
-			parsedSolutionHash,
-			parsedSolutionScavengerHash,
-			parsedScavenger,
+			req.SolutionHash,
+			req.Amount,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

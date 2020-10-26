@@ -11,15 +11,13 @@ import (
 
 func CmdCreateMonster() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-monster [description] [solutionHash] [reward] [solution] [scavenger]",
-		Short: "Creates a new monster",
-		Args:  cobra.MinimumNArgs(2),
+		Use:   "summon-monster [description] [solution] [reward]",
+		Short: "Summon the monster",
+		Args:  cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			argsDescription := string(args[0])
-			argsSolutionHash := string(args[1])
+			argsSolution := string(args[1])
 			argsReward := string(args[2])
-			argsSolution := string(args[3])
-			argsScavenger := string(args[4])
 
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
@@ -27,7 +25,8 @@ func CmdCreateMonster() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgMonster(clientCtx.GetFromAddress(), string(argsDescription), string(argsSolutionHash), string(argsReward), string(argsSolution), string(argsScavenger))
+			msg := types.NewMsgMonster(clientCtx.GetFromAddress(),
+				string(argsDescription), string(argsSolution), string(argsReward))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

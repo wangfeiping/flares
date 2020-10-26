@@ -11,13 +11,12 @@ import (
 
 func CmdCreateSeal() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-seal [solutionHash] [solutionScavengerHash] [scavenger]",
+		Use:   "create-seal [solution] [amount]",
 		Short: "Creates a new seal",
-		Args:  cobra.MinimumNArgs(2),
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsSolutionHash := string(args[0])
-			argsSolutionScavengerHash := string(args[1])
-			argsScavenger := string(args[2])
+			argsSolution := string(args[0])
+			argsAmount := string(args[1])
 
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
@@ -25,7 +24,8 @@ func CmdCreateSeal() *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgSeal(clientCtx.GetFromAddress(), string(argsSolutionHash), string(argsSolutionScavengerHash), string(argsScavenger))
+			msg := types.NewMsgSeal(clientCtx.GetFromAddress(),
+				argsSolution, argsAmount)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

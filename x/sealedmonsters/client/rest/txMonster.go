@@ -44,22 +44,14 @@ func createMonsterHandler(clientCtx client.Context) http.HandlerFunc {
 		}
 
 		parsedDescription := req.Description
-
-		parsedSolutionHash := req.SolutionHash
-
 		parsedReward := req.Reward
-
 		parsedSolution := req.Solution
-
-		parsedScavenger := req.Scavenger
 
 		msg := types.NewMsgMonster(
 			creator,
 			parsedDescription,
-			parsedSolutionHash,
-			parsedReward,
 			parsedSolution,
-			parsedScavenger,
+			parsedReward,
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

@@ -11,5 +11,6 @@ message MsgSeal {
   string solutionHash = 3; 
   string solutionScavengerHash = 4; 
   string scavenger = 5; 
+  string amount = 6; 
 }
 

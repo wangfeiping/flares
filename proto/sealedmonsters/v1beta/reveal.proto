@@ -10,6 +10,5 @@ message MsgReveal {
   bytes creator = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
   string solutionHash = 3; 
   string solution = 4; 
-  string scavenger = 5; 
 }
 

@@ -50,21 +50,17 @@ flaresd --home $CHAINDIR/$CHAINID keys add user3 --keyring-backend="test" --outp
 #flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user -a) $coins &> /dev/null
 #flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show validator -a) $coins  &> /dev/null
 flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user -a) $coins
-sleep 3
+sleep 1
 flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user1 -a) $coins
-sleep 3
+sleep 1
 flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user2 -a) $coins
-sleep 3
+sleep 1
 flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user3 -a) $coins
-sleep 3
+sleep 1
 flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show validator -a) $coins
-
-sleep 3
-
+sleep 1
 flaresd --home $CHAINDIR/$CHAINID gentx validator --keyring-backend="test" --chain-id $CHAINID &> /dev/null
-
-sleep 3 
-
+sleep 1
 flaresd --home $CHAINDIR/$CHAINID collect-gentxs &> /dev/null
 
 # Set proper defaults and change ports

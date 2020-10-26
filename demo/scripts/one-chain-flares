@@ -44,8 +44,20 @@ coins="100000000000base,100000000000accept,100000000000abc,100000000000stake,100
 flaresd --home $CHAINDIR/$CHAINID --chain-id $CHAINID init $CHAINID &> /dev/null
 flaresd --home $CHAINDIR/$CHAINID keys add validator --keyring-backend="test" > $CHAINDIR/$CHAINID/validator_seed.json 2> /dev/null
 flaresd --home $CHAINDIR/$CHAINID keys add user --keyring-backend="test" --output json > $CHAINDIR/$CHAINID/key_seed.json 2> /dev/null
-flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user -a) $coins &> /dev/null
-flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show validator -a) $coins  &> /dev/null
+flaresd --home $CHAINDIR/$CHAINID keys add user1 --keyring-backend="test" --output json > $CHAINDIR/$CHAINID/key_seed_1.json 2> /dev/null
+flaresd --home $CHAINDIR/$CHAINID keys add user2 --keyring-backend="test" --output json > $CHAINDIR/$CHAINID/key_seed_2.json 2> /dev/null
+flaresd --home $CHAINDIR/$CHAINID keys add user3 --keyring-backend="test" --output json > $CHAINDIR/$CHAINID/key_seed_3.json 2> /dev/null
+#flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user -a) $coins &> /dev/null
+#flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show validator -a) $coins  &> /dev/null
+flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user -a) $coins
+sleep 3
+flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user1 -a) $coins
+sleep 3
+flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user2 -a) $coins
+sleep 3
+flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show user3 -a) $coins
+sleep 3
+flaresd --home $CHAINDIR/$CHAINID add-genesis-account $(flaresd --home $CHAINDIR/$CHAINID keys --keyring-backend="test" show validator -a) $coins
 
 sleep 3
 
@@ -64,7 +76,7 @@ sed -i 's/timeout_commit = "5s"/timeout_commit = "1s"/g' $CHAINDIR/$CHAINID/conf
 sed -i 's/timeout_propose = "3s"/timeout_propose = "1s"/g' $CHAINDIR/$CHAINID/config/config.toml
 sed -i 's/index_all_keys = false/index_all_keys = true/g' $CHAINDIR/$CHAINID/config/config.toml
 # sed -i '' 's#index-events = \[\]#index-events = \["message.action","send_packet.packet_src_channel","send_packet.packet_sequence"\]#g' $CHAINDIR/$CHAINID/config/app.toml
-sed -i 's/log_level = "main:info/log_level = "flares:debug,flares\/x\/bank:debug,main:info/g' $CHAINDIR/$CHAINID/config/config.toml
+sed -i 's/log_level = "main:info/log_level = "x\/sealedmonsters:debug,x\/flares:debug,flares\/x\/bank:debug,main:info/g' $CHAINDIR/$CHAINID/config/config.toml
 
 # Start the gaia
 flaresd --home $CHAINDIR/$CHAINID start \

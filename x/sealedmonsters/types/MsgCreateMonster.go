@@ -9,37 +9,40 @@ import (
 var _ sdk.Msg = &MsgMonster{}
 
 func NewMsgMonster(creator sdk.AccAddress, description string, solutionHash string, reward string, solution string, scavenger string) *MsgMonster {
-  return &MsgMonster{
-    Id: uuid.New().String(),
-		Creator: creator,
-    Description: description,
-    SolutionHash: solutionHash,
-    Reward: reward,
-    Solution: solution,
-    Scavenger: scavenger,
+	return &MsgMonster{
+		Id:           uuid.New().String(),
+		Creator:      creator,
+		Description:  description,
+		SolutionHash: solutionHash,
+		Reward:       reward,
+		Solution:     solution,
+		Scavenger:    scavenger,
 	}
 }
 
 func (msg *MsgMonster) Route() string {
-  return RouterKey
+	return RouterKey
 }
 
 func (msg *MsgMonster) Type() string {
-  return "CreateMonster"
+	return "CreateMonster"
 }
 
 func (msg *MsgMonster) GetSigners() []sdk.AccAddress {
-  return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
+	return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
 }
 
 func (msg *MsgMonster) GetSignBytes() []byte {
-  bz := ModuleCdc.MustMarshalJSON(msg)
-  return sdk.MustSortJSON(bz)
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
 }
 
 func (msg *MsgMonster) ValidateBasic() error {
-  if msg.Creator.Empty() {
-    return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
-  }
-  return nil
+	if msg.Creator.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
+	}
+	if msg.SolutionHash == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "solutionHash can't be empty")
+	}
+	return nil
 }

@@ -27,6 +27,8 @@ Refer to a demo project [scavenge](https://tutorials.cosmos.network/scavenge/tut
 
 - contract
 
+- voucher
+
 - board
 
 - clearing

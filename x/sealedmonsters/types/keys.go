@@ -24,3 +24,11 @@ func KeyPrefix(p string) []byte {
 const (
 	MonsterKey= "Monster"
 )
+
+const (
+	SealKey= "Seal"
+)
+
+const (
+	RevealKey= "Reveal"
+)

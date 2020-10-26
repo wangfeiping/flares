@@ -6,38 +6,36 @@ import (
 	"github.com/google/uuid"
 )
 
-var _ sdk.Msg = &MsgMonster{}
+var _ sdk.Msg = &MsgReveal{}
 
-func NewMsgMonster(creator sdk.AccAddress, description string, solutionHash string, reward string, solution string, scavenger string) *MsgMonster {
-  return &MsgMonster{
+func NewMsgReveal(creator sdk.AccAddress, solutionHash string, solution string, scavenger string) *MsgReveal {
+  return &MsgReveal{
     Id: uuid.New().String(),
 		Creator: creator,
-    Description: description,
     SolutionHash: solutionHash,
-    Reward: reward,
     Solution: solution,
     Scavenger: scavenger,
 	}
 }
 
-func (msg *MsgMonster) Route() string {
+func (msg *MsgReveal) Route() string {
   return RouterKey
 }
 
-func (msg *MsgMonster) Type() string {
-  return "CreateMonster"
+func (msg *MsgReveal) Type() string {
+  return "CreateReveal"
 }
 
-func (msg *MsgMonster) GetSigners() []sdk.AccAddress {
+func (msg *MsgReveal) GetSigners() []sdk.AccAddress {
   return []sdk.AccAddress{sdk.AccAddress(msg.Creator)}
 }
 
-func (msg *MsgMonster) GetSignBytes() []byte {
+func (msg *MsgReveal) GetSignBytes() []byte {
   bz := ModuleCdc.MustMarshalJSON(msg)
   return sdk.MustSortJSON(bz)
 }
 
-func (msg *MsgMonster) ValidateBasic() error {
+func (msg *MsgReveal) ValidateBasic() error {
   if msg.Creator.Empty() {
     return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "creator can't be empty")
   }

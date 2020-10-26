@@ -17,16 +17,30 @@ func RegisterRoutes(clientCtx client.Context, r *mux.Router) {
 	registerQueryRoutes(clientCtx, r)
 	registerTxHandlers(clientCtx, r)
 
+	registerQueryRoutes(clientCtx, r)
+	registerTxHandlers(clientCtx, r)
+
+	registerQueryRoutes(clientCtx, r)
+	registerTxHandlers(clientCtx, r)
+
 }
 
 func registerQueryRoutes(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 3
+	r.HandleFunc("custom/sealedmonsters/"+types.QueryListReveal, listRevealHandler(clientCtx)).Methods("GET")
+
+	r.HandleFunc("custom/sealedmonsters/"+types.QueryListSeal, listSealHandler(clientCtx)).Methods("GET")
+
 	r.HandleFunc("custom/sealedmonsters/"+types.QueryListMonster, listMonsterHandler(clientCtx)).Methods("GET")
 
 }
 
 func registerTxHandlers(clientCtx client.Context, r *mux.Router) {
 	// this line is used by starport scaffolding # 4
+	r.HandleFunc("/sealedmonsters/reveal", createRevealHandler(clientCtx)).Methods("POST")
+
+	r.HandleFunc("/sealedmonsters/seal", createSealHandler(clientCtx)).Methods("POST")
+
 	r.HandleFunc("/sealedmonsters/monster", createMonsterHandler(clientCtx)).Methods("POST")
 
 }

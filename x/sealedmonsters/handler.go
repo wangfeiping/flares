@@ -16,6 +16,10 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 		switch msg := msg.(type) {
 		// this line is used by starport scaffolding # 1
+		case *types.MsgReveal:
+			return handleMsgCreateReveal(ctx, k, msg)
+		case *types.MsgSeal:
+			return handleMsgCreateSeal(ctx, k, msg)
 		case *types.MsgMonster:
 			return handleMsgCreateMonster(ctx, k, msg)
 		default:

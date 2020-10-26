@@ -3,6 +3,8 @@ package flares.sealedmonsters.v1beta1;
 
 import "cosmos/base/query/v1beta1/pagination.proto";
 // this line is used by starport scaffolding # 1
+import "sealedmonsters/v1beta/reveal.proto";
+import "sealedmonsters/v1beta/seal.proto";
 import "sealedmonsters/v1beta/monster.proto";
 
 
@@ -11,10 +13,28 @@ option go_package = "github.com/wangfeiping/flares/x/sealedmonsters/types";
 // Query defines the gRPC querier service.
 service Query {
     // this line is used by starport scaffolding # 2
+	rpc AllReveal(QueryAllRevealRequest) returns (QueryAllRevealResponse);
+	rpc AllSeal(QueryAllSealRequest) returns (QueryAllSealResponse);
 	rpc AllMonster(QueryAllMonsterRequest) returns (QueryAllMonsterResponse);
 }
 
 // this line is used by starport scaffolding # 3
+message QueryAllRevealRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRevealResponse {
+	repeated MsgReveal reveal = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+message QueryAllSealRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllSealResponse {
+	repeated MsgSeal seal = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
 message QueryAllMonsterRequest {
 	cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }

@@ -380,6 +380,8 @@ func New(
 		upgradetypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
 
+		sealedtypes.ModuleName,
+
 		flarestypes.ModuleName,
 	)
 

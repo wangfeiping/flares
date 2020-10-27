@@ -1,9 +1,14 @@
 syntax = "proto3";
 package flares.flares.v1beta1;
 
+import "gogoproto/gogo.proto";
+import "flares/v1beta/flares.proto";
+
 option go_package = "github.com/wangfeiping/flares/x/flares/types";
 
 // GenesisState defines the capability module's genesis state.
 message GenesisState {
+  // params defines all the paramaters of related to flares.
+  Params params = 1 [(gogoproto.nullable) = false];
 }
 

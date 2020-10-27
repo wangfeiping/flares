@@ -155,9 +155,26 @@ $ ./scripts/protocgen
 
 ```
 
+## Test
+
+```
+# Test
+
+$ cd $GOPATH/src/github.com/wangfeiping/flares
+$ go test ./...
+
+or
+
+$ go get -u github.com/onsi/ginkgo/ginkgo
+$ cd $GOPATH/src/github.com/wangfeiping/flares
+$ ginkgo ./...
+
+```
+
 ## Learn more
 
 - [Starport](https://github.com/tendermint/starport)
 - [Cosmos SDK documentation](https://docs.cosmos.network)
 - [Cosmos Tutorials](https://tutorials.cosmos.network)
 - [Channel on Discord](https://discord.gg/W8trcGV)
+- [BDD Test](https://github.com/onsi/ginkgo)

@@ -10,7 +10,7 @@ import (
 	"github.com/wangfeiping/flares/x/flares/types"
 )
 
-var _ ibctransfer.Keeper = (*IBCTransferKeeperWrapper)(nil)
+// var _ ibctransfer.Keeper = (*IBCTransferKeeperWrapper)(nil)
 
 var ModuleName = "flares/x/ibc"
 
@@ -19,11 +19,11 @@ type IBCTransferKeeperWrapper struct {
 	flaresKeeper keeper.Keeper
 }
 
-func NewIBCTransferKeeperWrapper(ibctransferKeeper ibctransfer.Keeper, flaresK keeper.Keeper) ibctransfer.Keeper {
-	return IBCTransferKeeperWrapper{
-		Keeper:       ibctransferKeeper,
-		flaresKeeper: flaresK}
-}
+// func NewIBCTransferKeeperWrapper(ibctransferKeeper ibctransfer.Keeper, flaresK keeper.Keeper) ibctransfer.Keeper {
+// 	return IBCTransferKeeperWrapper{
+// 		Keeper:       ibctransferKeeper,
+// 		flaresKeeper: flaresK}
+// }
 
 func (k IBCTransferKeeperWrapper) OnRecvPacket(ctx sdk.Context,
 	packet channeltypes.Packet, data ibctransfertypes.FungibleTokenPacketData) error {
@@ -46,7 +46,7 @@ func (k IBCTransferKeeperWrapper) OnRecvPacket(ctx sdk.Context,
 		if err != nil {
 			return err
 		}
-		if !c.IsAuctions() {
+		if k.flaresKeeper.IsPayment(&c) {
 			// contract clearing
 			// check contract bottom
 			// check if the base price is met

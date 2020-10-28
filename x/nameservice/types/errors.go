@@ -8,5 +8,5 @@ import (
 
 // x/nameservice module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrWhoisNotFound = sdkerrors.Register(ModuleName, 2100, "whois not found")
 )

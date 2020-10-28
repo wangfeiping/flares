@@ -28,10 +28,10 @@ import (
 var _ = Describe("x/nameservice", func() {
 
 	var (
-		// denom   string   = "voucher"
+		// voucher string   = "voucher"
 		denoms  []string = []string{"base", "aaa", "bbb", "ccc"}
 		balance int64    = 9999999
-		num     int      = 5
+		num     int      = 6
 
 		addrs         []sdk.AccAddress
 		ctx           sdk.Context
@@ -123,12 +123,14 @@ var _ = Describe("x/nameservice", func() {
 	})
 
 	Describe("Test payment for nameservice", func() {
+		value := "pay.cosmos"
+
 		Context("create a name", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 99, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 110, Time: time.Unix(10, 0)})
 				msg := nstypes.NewMsgName(addrs[0],
-					"pay.cosmos", "99aaa")
+					value, "99aaa")
 				_, err := nsHandle(ctx, msg)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
@@ -137,9 +139,9 @@ var _ = Describe("x/nameservice", func() {
 		Context("create a contract", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 110, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 111, Time: time.Unix(10, 0)})
 				msg := types.NewMsgContract(addrs[0],
-					"nameservice", "pay.cosmos", "aaa", 0, "99aaa")
+					"nameservice", value, "aaa", 0, "99aaa")
 				_, err := handle(ctx, msg)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
@@ -194,15 +196,28 @@ var _ = Describe("x/nameservice", func() {
 				Expect(int64(9999900)).Should(Equal(coin.Amount.Int64()))
 			})
 		})
+
+		Context("check whois", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 114, Time: time.Unix(10, 0)})
+
+				whois, err := nsKeeper.GetWhois(ctx, value)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(whois).ShouldNot(BeNil())
+				Expect(whois.Owner).Should(Equal(addrs[1].String()))
+			})
+		})
 	})
 
 	Describe("Test auctions for nameservice", func() {
+		value := "xxx.cosmos"
 		Context("create a name", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 99, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 199, Time: time.Unix(10, 0)})
 				msg := nstypes.NewMsgName(addrs[0],
-					"xxx.cosmos", "99bbb")
+					value, "99bbb")
 				_, err := nsHandle(ctx, msg)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
@@ -211,9 +226,9 @@ var _ = Describe("x/nameservice", func() {
 		Context("create a contract", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 110, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 200, Time: time.Unix(10, 0)})
 				msg := types.NewMsgContract(addrs[0],
-					"nameservice", "xxx.cosmos", "bbb", 100, "99bbb")
+					"nameservice", value, "bbb", 80, "99bbb")
 				_, err := handle(ctx, msg)
 				Expect(err).ShouldNot(HaveOccurred())
 			})
@@ -222,7 +237,7 @@ var _ = Describe("x/nameservice", func() {
 		Context("send tokens", func() {
 			It("should be failed", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 111, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 201, Time: time.Unix(10, 0)})
 				grpcReq := &types.QueryAllContractRequest{}
 				cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
 				resp, err := keeper.AllContract(cctx, grpcReq)
@@ -242,7 +257,7 @@ var _ = Describe("x/nameservice", func() {
 		Context("send tokens", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 112, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 202, Time: time.Unix(10, 0)})
 
 				contracts := keeper.GetAllContract(ctx)
 				Expect(1).Should(Equal(len(contracts)))
@@ -269,7 +284,7 @@ var _ = Describe("x/nameservice", func() {
 		Context("check all account balances before the contract clearing", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 113, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 203, Time: time.Unix(10, 0)})
 				contracts := keeper.GetAllContract(ctx)
 				Expect(1).Should(Equal(len(contracts)))
 				c := contracts[0]
@@ -289,7 +304,7 @@ var _ = Describe("x/nameservice", func() {
 		Context("clearing the contract", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 210, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 280, Time: time.Unix(10, 0)})
 				handler.BeginBlockHandle(ctx, abci.RequestBeginBlock{}, *keeper)
 				grpcReq := &types.QueryAllContractRequest{
 					State: "success"}
@@ -318,12 +333,15 @@ var _ = Describe("x/nameservice", func() {
 		Context("check all account balances after the contract clearing", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
-					tmproto.Header{Height: 211, Time: time.Unix(10, 0)})
+					tmproto.Header{Height: 291, Time: time.Unix(10, 0)})
 
 				grpcReq := &types.QueryAllContractRequest{}
 				cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
 				resp, err := keeper.AllContract(cctx, grpcReq)
 				Expect(err).ShouldNot(HaveOccurred())
+				// for _, c := range resp.Contract {
+				// 	fmt.Println("contract: ", c.Key)
+				// }
 				Expect(0).Should(Equal(len(resp.Contract)))
 
 				grpcReq = &types.QueryAllContractRequest{
@@ -347,158 +365,182 @@ var _ = Describe("x/nameservice", func() {
 				Expect(int64(9999879)).Should(Equal(coin.Amount.Int64()))
 			})
 		})
+
+		Context("check whois", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 292, Time: time.Unix(10, 0)})
+
+				whois, err := nsKeeper.GetWhois(ctx, value)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(whois).ShouldNot(BeNil())
+				Expect(whois.Owner).Should(Equal(addrs[2].String()))
+			})
+		})
 	})
 
-	// Describe("Test multi-tokens auctions for nameservice", func() {
-	// 	Context("create a name", func() {
-	// 		It("should be success", func() {
-	// 			ctx = ctx.WithBlockHeader(
-	// 				tmproto.Header{Height: 99, Time: time.Unix(10, 0)})
-	// 			msg := nstypes.NewMsgName(addrs[0],
-	// 				"multi.cosmos", "99aaa")
-	// 			_, err := nsHandle(ctx, msg)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 		})
-	// 	})
+	Describe("Test multi-tokens auctions for nameservice", func() {
+		value := "multi.cosmos"
 
-	// 	Context("create a contract", func() {
-	// 		It("should be success", func() {
-	// 			ctx = ctx.WithBlockHeader(
-	// 				tmproto.Header{Height: 110, Time: time.Unix(10, 0)})
-	// 			msg := types.NewMsgContract(addrs[0],
-	// 				"nameservice", "xxx.cosmos", "ccc", 100, "99voucher")
-	// 			_, err := handle(ctx, msg)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 		})
-	// 	})
+		Context("create a name", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 299, Time: time.Unix(10, 0)})
+				msg := nstypes.NewMsgName(addrs[0],
+					value, "9base")
+				_, err := nsHandle(ctx, msg)
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+		})
 
-	// 	Context("send tokens", func() {
-	// 		It("should be failed", func() {
-	// 			ctx = ctx.WithBlockHeader(
-	// 				tmproto.Header{Height: 111, Time: time.Unix(10, 0)})
-	// 			grpcReq := &types.QueryAllContractRequest{}
-	// 			cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-	// 			resp, err := keeper.AllContract(cctx, grpcReq)
-	// 			contracts := resp.Contract
-	// 			Expect(1).Should(Equal(len(contracts)))
-	// 			c := contracts[0]
-	// 			addr, err := sdk.AccAddressFromBech32(c.Receiver)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			coins, err := sdk.ParseCoins("100xxx")
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			err = bankKeeper.SendCoins(ctx,
-	// 				addrs[1], addr, coins)
-	// 			Expect(err).Should(HaveOccurred())
-	// 		})
-	// 	})
+		Context("create a contract", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 300, Time: time.Unix(10, 0)})
+				msg := types.NewMsgContract(addrs[0],
+					"nameservice", value, "@all", 80, "9base")
+				_, err := handle(ctx, msg)
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+		})
 
-	// 	Context("send tokens", func() {
-	// 		It("should be success", func() {
-	// 			ctx = ctx.WithBlockHeader(
-	// 				tmproto.Header{Height: 112, Time: time.Unix(10, 0)})
+		Context("send tokens", func() {
+			It("should be failed", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 301, Time: time.Unix(10, 0)})
+				grpcReq := &types.QueryAllContractRequest{}
+				cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err := keeper.AllContract(cctx, grpcReq)
+				contracts := resp.Contract
+				Expect(1).Should(Equal(len(contracts)))
+				c := contracts[0]
+				addr, err := sdk.AccAddressFromBech32(c.Receiver)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err := sdk.ParseCoins("100xxx")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[1], addr, coins)
+				Expect(err).Should(HaveOccurred())
+			})
+		})
 
-	// 			contracts := keeper.GetAllContract(ctx)
-	// 			Expect(1).Should(Equal(len(contracts)))
-	// 			c := contracts[0]
-	// 			moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
-	// 			Expect(err).ShouldNot(HaveOccurred())
+		Context("send tokens", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 302, Time: time.Unix(10, 0)})
 
-	// 			coins, err := sdk.ParseCoins("100voucher")
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			cctx := ctx.WithTxBytes([]byte(addrs[1]))
-	// 			err = bankKeeper.SendCoins(cctx,
-	// 				addrs[1], moduleAcc, coins)
-	// 			Expect(err).ShouldNot(HaveOccurred())
+				contracts := keeper.GetAllContract(ctx)
+				Expect(1).Should(Equal(len(contracts)))
+				c := contracts[0]
+				moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
+				Expect(err).ShouldNot(HaveOccurred())
 
-	// 			coins, err = sdk.ParseCoins("120voucher")
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			cctx = ctx.WithTxBytes([]byte(addrs[2]))
-	// 			err = bankKeeper.SendCoins(cctx,
-	// 				addrs[2], moduleAcc, coins)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 		})
-	// 	})
+				coins, err := sdk.ParseCoins("100aaa")
+				Expect(err).ShouldNot(HaveOccurred())
+				cctx := ctx.WithTxBytes([]byte(addrs[3]))
+				err = bankKeeper.SendCoins(cctx,
+					addrs[3], moduleAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
 
-	// 	Context("check all account balances before the contract clearing", func() {
-	// 		It("should be success", func() {
-	// 			ctx = ctx.WithBlockHeader(
-	// 				tmproto.Header{Height: 113, Time: time.Unix(10, 0)})
-	// 			contracts := keeper.GetAllContract(ctx)
-	// 			Expect(1).Should(Equal(len(contracts)))
-	// 			c := contracts[0]
-	// 			moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			coin := bankKeeper.GetBalance(ctx, moduleAcc, denom)
-	// 			Expect(int64(220)).Should(Equal(coin.Amount.Int64()))
-	// 			coin = bankKeeper.GetBalance(ctx, addrs[0], denom)
-	// 			Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
-	// 			coin = bankKeeper.GetBalance(ctx, addrs[1], denom)
-	// 			Expect(int64(9999899)).Should(Equal(coin.Amount.Int64()))
-	// 			coin = bankKeeper.GetBalance(ctx, addrs[2], denom)
-	// 			Expect(int64(9999879)).Should(Equal(coin.Amount.Int64()))
-	// 		})
-	// 	})
+				coins, err = sdk.ParseCoins("120bbb")
+				Expect(err).ShouldNot(HaveOccurred())
+				cctx = ctx.WithTxBytes([]byte(addrs[4]))
+				err = bankKeeper.SendCoins(cctx,
+					addrs[4], moduleAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
 
-	// 	Context("clearing the contract", func() {
-	// 		It("should be success", func() {
-	// 			ctx = ctx.WithBlockHeader(
-	// 				tmproto.Header{Height: 210, Time: time.Unix(10, 0)})
-	// 			handler.BeginBlockHandle(ctx, abci.RequestBeginBlock{}, *keeper)
-	// 			grpcReq := &types.QueryAllContractRequest{
-	// 				State: "success"}
-	// 			cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-	// 			resp, err := keeper.AllContract(cctx, grpcReq)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			Expect(2).Should(Equal(len(resp.Contract)))
+				coins, err = sdk.ParseCoins("101ccc")
+				Expect(err).ShouldNot(HaveOccurred())
+				cctx = ctx.WithTxBytes([]byte(addrs[5]))
+				err = bankKeeper.SendCoins(cctx,
+					addrs[5], moduleAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+		})
 
-	// 			grpcReq = &types.QueryAllContractRequest{
-	// 				State: "fail"}
-	// 			cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-	// 			resp, err = keeper.AllContract(cctx, grpcReq)
-	// 			// fmt.Println("err: ", resp.Contract[0].Result)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			Expect(0).Should(Equal(len(resp.Contract)))
+		Context("check all account balances before the contract clearing", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 303, Time: time.Unix(10, 0)})
+				contracts := keeper.GetAllContract(ctx)
+				Expect(1).Should(Equal(len(contracts)))
+				c := contracts[0]
+				moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
+				Expect(err).ShouldNot(HaveOccurred())
+				coin := bankKeeper.GetBalance(ctx, moduleAcc, denoms[1])
+				Expect(int64(100)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, moduleAcc, denoms[2])
+				Expect(int64(120)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, moduleAcc, denoms[3])
+				Expect(int64(101)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[3], denoms[1])
+				Expect(int64(9999899)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[4], denoms[2])
+				Expect(int64(9999879)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[5], denoms[3])
+				Expect(int64(9999898)).Should(Equal(coin.Amount.Int64()))
+			})
+		})
 
-	// 			grpcReq = &types.QueryAllContractRequest{
-	// 				State: ""}
-	// 			cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-	// 			resp, err = keeper.AllContract(cctx, grpcReq)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			Expect(0).Should(Equal(len(resp.Contract)))
-	// 		})
-	// 	})
+		// Context("clearing the contract", func() {
+		// 	It("should be success", func() {
+		// 		ctx = ctx.WithBlockHeader(
+		// 			tmproto.Header{Height: 380, Time: time.Unix(10, 0)})
+		// 		handler.BeginBlockHandle(ctx, abci.RequestBeginBlock{}, *keeper)
+		// 		grpcReq := &types.QueryAllContractRequest{
+		// 			State: "success"}
+		// 		cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+		// 		resp, err := keeper.AllContract(cctx, grpcReq)
+		// 		Expect(err).ShouldNot(HaveOccurred())
+		// 		Expect(3).Should(Equal(len(resp.Contract)))
 
-	// 	Context("check all account balances after the contract clearing", func() {
-	// 		It("should be success", func() {
-	// 			ctx = ctx.WithBlockHeader(
-	// 				tmproto.Header{Height: 211, Time: time.Unix(10, 0)})
+		// 		grpcReq = &types.QueryAllContractRequest{
+		// 			State: "fail"}
+		// 		cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+		// 		resp, err = keeper.AllContract(cctx, grpcReq)
+		// 		Expect(err).ShouldNot(HaveOccurred())
+		// 		Expect(0).Should(Equal(len(resp.Contract)))
 
-	// 			grpcReq := &types.QueryAllContractRequest{}
-	// 			cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-	// 			resp, err := keeper.AllContract(cctx, grpcReq)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			Expect(0).Should(Equal(len(resp.Contract)))
+		// 		grpcReq = &types.QueryAllContractRequest{
+		// 			State: ""}
+		// 		cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+		// 		resp, err = keeper.AllContract(cctx, grpcReq)
+		// 		Expect(err).ShouldNot(HaveOccurred())
+		// 		Expect(0).Should(Equal(len(resp.Contract)))
+		// 	})
+		// })
 
-	// 			grpcReq = &types.QueryAllContractRequest{
-	// 				State: "success"}
-	// 			cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-	// 			resp, err = keeper.AllContract(cctx, grpcReq)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			Expect(2).Should(Equal(len(resp.Contract)))
+		// Context("check all account balances after the contract clearing", func() {
+		// 	It("should be success", func() {
+		// 		ctx = ctx.WithBlockHeader(
+		// 			tmproto.Header{Height: 391, Time: time.Unix(10, 0)})
 
-	// 			c := resp.Contract[0]
-	// 			moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
-	// 			Expect(err).ShouldNot(HaveOccurred())
-	// 			coin := bankKeeper.GetBalance(ctx, moduleAcc, denom)
-	// 			Expect(int64(0)).Should(Equal(coin.Amount.Int64()))
+		// 		grpcReq := &types.QueryAllContractRequest{}
+		// 		cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+		// 		resp, err := keeper.AllContract(cctx, grpcReq)
+		// 		Expect(err).ShouldNot(HaveOccurred())
+		// 		Expect(0).Should(Equal(len(resp.Contract)))
 
-	// 			coin = bankKeeper.GetBalance(ctx, addrs[0], denom)
-	// 			Expect(int64(10000119)).Should(Equal(coin.Amount.Int64()))
-	// 			coin = bankKeeper.GetBalance(ctx, addrs[1], denom)
-	// 			Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
-	// 			coin = bankKeeper.GetBalance(ctx, addrs[2], denom)
-	// 			Expect(int64(9999879)).Should(Equal(coin.Amount.Int64()))
-	// 		})
-	// 	})
-	// })
+		// 		grpcReq = &types.QueryAllContractRequest{
+		// 			State: "success"}
+		// 		cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+		// 		resp, err = keeper.AllContract(cctx, grpcReq)
+		// 		Expect(err).ShouldNot(HaveOccurred())
+		// 		Expect(2).Should(Equal(len(resp.Contract)))
+
+		// 		c := resp.Contract[0]
+		// 		moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
+		// 		Expect(err).ShouldNot(HaveOccurred())
+		// 		coin := bankKeeper.GetBalance(ctx, moduleAcc, denom)
+		// 		Expect(int64(0)).Should(Equal(coin.Amount.Int64()))
+
+		// 		coin = bankKeeper.GetBalance(ctx, addrs[0], denom)
+		// 		Expect(int64(10000119)).Should(Equal(coin.Amount.Int64()))
+		// 		coin = bankKeeper.GetBalance(ctx, addrs[1], denom)
+		// 		Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
+		// 		coin = bankKeeper.GetBalance(ctx, addrs[2], denom)
+		// 		Expect(int64(9999879)).Should(Equal(coin.Amount.Int64()))
+		// 	})
+		// })
+	})
 })

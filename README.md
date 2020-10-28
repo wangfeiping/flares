@@ -17,6 +17,8 @@
 
 Refer to a demo project [nameservice](https://tutorials.cosmos.network/nameservice/tutorial/00-intro.html) and make some changes.
 
+![flares-nameservice](https://raw.githubusercontent.com/wangfeiping/flares/hackatom2020/docs/flares-nameservice.png)
+
 ### Sealed Monsters - flares with games
 
 Refer to a demo project [scavenge](https://tutorials.cosmos.network/scavenge/tutorial/01-background.html) and make some changes.

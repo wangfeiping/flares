@@ -78,7 +78,7 @@ func (k Keeper) CheckBoard(ctx sdk.Context,
 	voucher := sdk.NewCoin(types.VoycherKey,
 		sdk.NewIntFromBigInt(dec.Mul(sdk.NewDecFromIntWithPrec(coin.Amount, 12)).BigInt()))
 	// sdk.NewIntFromBigInt(dec.Mul(sdk.NewDecFromInt(coin.Amount)).BigInt()))
-	fmt.Println("\ndec: ", dec, "; record: ", record.Amount, "; vocher: ", voucher.Amount)
+	fmt.Println("\ndec: ", dec, "; record: ", record.Amount, "; voucher: ", voucher.Amount)
 	return voucher, nil
 }
 

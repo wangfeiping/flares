@@ -8,12 +8,9 @@ import "gogoproto/gogo.proto";
 message MsgBoard {
   string id = 1;
   bytes creator = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-  string base = 3; 
-  string baseDenom = 4; 
-  string baseAddress = 5; 
-  string accept = 6; 
-  string acceptDenom = 7; 
-  string acceptAddress = 8; 
-  string source = 9; 
+  string baseDenom = 3; 
+  string address = 4; 
+  string acceptDenom = 5; 
+  string source = 6; 
 }
 

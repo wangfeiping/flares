@@ -25,15 +25,12 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MsgBoard struct {
-	Id            string                                        `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Creator       github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,2,opt,name=creator,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"creator,omitempty"`
-	Base          string                                        `protobuf:"bytes,3,opt,name=base,proto3" json:"base,omitempty"`
-	BaseDenom     string                                        `protobuf:"bytes,4,opt,name=baseDenom,proto3" json:"baseDenom,omitempty"`
-	BaseAddress   string                                        `protobuf:"bytes,5,opt,name=baseAddress,proto3" json:"baseAddress,omitempty"`
-	Accept        string                                        `protobuf:"bytes,6,opt,name=accept,proto3" json:"accept,omitempty"`
-	AcceptDenom   string                                        `protobuf:"bytes,7,opt,name=acceptDenom,proto3" json:"acceptDenom,omitempty"`
-	AcceptAddress string                                        `protobuf:"bytes,8,opt,name=acceptAddress,proto3" json:"acceptAddress,omitempty"`
-	Source        string                                        `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`
+	Id          string                                        `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Creator     github_com_cosmos_cosmos_sdk_types.AccAddress `protobuf:"bytes,2,opt,name=creator,proto3,casttype=github.com/cosmos/cosmos-sdk/types.AccAddress" json:"creator,omitempty"`
+	BaseDenom   string                                        `protobuf:"bytes,3,opt,name=baseDenom,proto3" json:"baseDenom,omitempty"`
+	Address     string                                        `protobuf:"bytes,4,opt,name=address,proto3" json:"address,omitempty"`
+	AcceptDenom string                                        `protobuf:"bytes,5,opt,name=acceptDenom,proto3" json:"acceptDenom,omitempty"`
+	Source      string                                        `protobuf:"bytes,6,opt,name=source,proto3" json:"source,omitempty"`
 }
 
 func (m *MsgBoard) Reset()         { *m = MsgBoard{} }
@@ -83,13 +80,6 @@ func (m *MsgBoard) GetCreator() github_com_cosmos_cosmos_sdk_types.AccAddress {
 	return nil
 }
 
-func (m *MsgBoard) GetBase() string {
-	if m != nil {
-		return m.Base
-	}
-	return ""
-}
-
 func (m *MsgBoard) GetBaseDenom() string {
 	if m != nil {
 		return m.BaseDenom
@@ -97,16 +87,9 @@ func (m *MsgBoard) GetBaseDenom() string {
 	return ""
 }
 
-func (m *MsgBoard) GetBaseAddress() string {
+func (m *MsgBoard) GetAddress() string {
 	if m != nil {
-		return m.BaseAddress
-	}
-	return ""
-}
-
-func (m *MsgBoard) GetAccept() string {
-	if m != nil {
-		return m.Accept
+		return m.Address
 	}
 	return ""
 }
@@ -114,13 +97,6 @@ func (m *MsgBoard) GetAccept() string {
 func (m *MsgBoard) GetAcceptDenom() string {
 	if m != nil {
 		return m.AcceptDenom
-	}
-	return ""
-}
-
-func (m *MsgBoard) GetAcceptAddress() string {
-	if m != nil {
-		return m.AcceptAddress
 	}
 	return ""
 }
@@ -139,27 +115,25 @@ func init() {
 func init() { proto.RegisterFile("flares/v1beta/board.proto", fileDescriptor_affc92df03f6e53f) }
 
 var fileDescriptor_affc92df03f6e53f = []byte{
-	// 313 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x51, 0xbb, 0x4e, 0xf3, 0x30,
-	0x14, 0xae, 0xf3, 0xf7, 0xef, 0xc5, 0x5c, 0x06, 0x0b, 0x90, 0x41, 0xc8, 0x54, 0x88, 0xa1, 0x03,
-	0x8d, 0x55, 0xf1, 0x04, 0xad, 0x10, 0x0b, 0x62, 0xe9, 0xc8, 0xe6, 0xd8, 0xae, 0x89, 0xa0, 0x75,
-	0x64, 0xbb, 0x5c, 0xde, 0x82, 0x77, 0xe1, 0x25, 0x18, 0x3b, 0x32, 0x21, 0xd4, 0xbc, 0x05, 0x13,
-	0xb2, 0x9d, 0x88, 0x30, 0x9d, 0xef, 0x76, 0xbe, 0xe1, 0x1c, 0x78, 0x38, 0x7f, 0x60, 0x46, 0x5a,
-	0xfa, 0x38, 0xce, 0xa4, 0x63, 0x34, 0xd3, 0xcc, 0x88, 0xb4, 0x30, 0xda, 0x69, 0xb4, 0x1f, 0xad,
-	0xb4, 0x1a, 0x31, 0x31, 0x3e, 0xda, 0x53, 0x5a, 0xe9, 0x90, 0xa0, 0x1e, 0xc5, 0xf0, 0xe9, 0x5b,
-	0x02, 0x7b, 0x37, 0x56, 0x4d, 0xfd, 0x3e, 0xda, 0x85, 0x49, 0x2e, 0x30, 0x18, 0x80, 0x61, 0x7f,
-	0x96, 0xe4, 0x02, 0x5d, 0xc3, 0x2e, 0x37, 0x92, 0x39, 0x6d, 0x70, 0x32, 0x00, 0xc3, 0xed, 0xe9,
-	0xf8, 0xfb, 0xf3, 0x64, 0xa4, 0x72, 0x77, 0xb7, 0xca, 0x52, 0xae, 0x17, 0x94, 0x6b, 0xbb, 0xd0,
-	0xb6, 0x1a, 0x23, 0x2b, 0xee, 0xa9, 0x7b, 0x29, 0xa4, 0x4d, 0x27, 0x9c, 0x4f, 0x84, 0x30, 0xd2,
-	0xda, 0x59, 0xdd, 0x80, 0x10, 0x6c, 0x67, 0xcc, 0x4a, 0xfc, 0x2f, 0xd4, 0x07, 0x8c, 0x8e, 0x61,
-	0xdf, 0xcf, 0x4b, 0xb9, 0xd4, 0x0b, 0xdc, 0x0e, 0xc6, 0xaf, 0x80, 0x06, 0x70, 0xcb, 0x93, 0xaa,
-	0x09, 0xff, 0x0f, 0x7e, 0x53, 0x42, 0x07, 0xb0, 0xc3, 0x38, 0x97, 0x85, 0xc3, 0x9d, 0x60, 0x56,
-	0xcc, 0x6f, 0x46, 0x14, 0x9b, 0xbb, 0x71, 0xb3, 0x21, 0xa1, 0x33, 0xb8, 0x13, 0x69, 0xdd, 0xde,
-	0x0b, 0x99, 0xbf, 0xa2, 0xef, 0xb7, 0x7a, 0x65, 0xb8, 0xc4, 0xfd, 0xd8, 0x1f, 0xd9, 0xf4, 0xea,
-	0x7d, 0x43, 0xc0, 0x7a, 0x43, 0xc0, 0xd7, 0x86, 0x80, 0xd7, 0x92, 0xb4, 0xd6, 0x25, 0x69, 0x7d,
-	0x94, 0xa4, 0x75, 0x7b, 0xde, 0xb8, 0xce, 0x13, 0x5b, 0xaa, 0xb9, 0xcc, 0x8b, 0x7c, 0xa9, 0x68,
-	0xf5, 0xae, 0xe7, 0x1a, 0x84, 0x3b, 0x65, 0x9d, 0xf0, 0x84, 0x8b, 0x9f, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0xbf, 0x6a, 0x54, 0xc7, 0xce, 0x01, 0x00, 0x00,
+	// 283 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x90, 0xbb, 0x4e, 0xc3, 0x30,
+	0x18, 0x85, 0xe3, 0x00, 0x29, 0x35, 0x88, 0xc1, 0x02, 0x64, 0x10, 0x32, 0x11, 0x53, 0x07, 0x1a,
+	0x2b, 0xe2, 0x09, 0x1a, 0x21, 0x16, 0xc4, 0xd2, 0x91, 0xcd, 0xb1, 0x5d, 0x13, 0x41, 0xe2, 0xc8,
+	0x76, 0xb9, 0xbc, 0x05, 0x8f, 0xc5, 0xd8, 0x11, 0x16, 0x84, 0x92, 0xb7, 0x60, 0x42, 0x75, 0x12,
+	0xd1, 0xe9, 0xbf, 0x7c, 0xe7, 0xd8, 0xfa, 0x0f, 0x3c, 0x59, 0x3c, 0x31, 0x23, 0x2d, 0x7d, 0x4e,
+	0x73, 0xe9, 0x18, 0xcd, 0x35, 0x33, 0x22, 0xa9, 0x8d, 0x76, 0x1a, 0x1d, 0x75, 0x28, 0xe9, 0x4b,
+	0xa7, 0x48, 0x4f, 0x0f, 0x95, 0x56, 0xda, 0x2b, 0xe8, 0xba, 0xeb, 0xc4, 0x17, 0x5f, 0x00, 0xee,
+	0xde, 0x59, 0x95, 0xad, 0xfd, 0xe8, 0x00, 0x86, 0x85, 0xc0, 0x20, 0x06, 0x93, 0xf1, 0x3c, 0x2c,
+	0x04, 0xba, 0x85, 0x23, 0x6e, 0x24, 0x73, 0xda, 0xe0, 0x30, 0x06, 0x93, 0xfd, 0x2c, 0xfd, 0xfd,
+	0x3e, 0x9f, 0xaa, 0xc2, 0x3d, 0x2c, 0xf3, 0x84, 0xeb, 0x92, 0x72, 0x6d, 0x4b, 0x6d, 0xfb, 0x32,
+	0xb5, 0xe2, 0x91, 0xba, 0xb7, 0x5a, 0xda, 0x64, 0xc6, 0xf9, 0x4c, 0x08, 0x23, 0xad, 0x9d, 0x0f,
+	0x2f, 0xa0, 0x33, 0x38, 0xce, 0x99, 0x95, 0xd7, 0xb2, 0xd2, 0x25, 0xde, 0xf2, 0x7f, 0xfc, 0x2f,
+	0x10, 0x86, 0x23, 0xd6, 0x39, 0xf0, 0xb6, 0x67, 0xc3, 0x88, 0x62, 0xb8, 0xc7, 0x38, 0x97, 0xb5,
+	0xeb, 0x9c, 0x3b, 0x9e, 0x6e, 0xae, 0xd0, 0x31, 0x8c, 0xac, 0x5e, 0x1a, 0x2e, 0x71, 0xe4, 0x61,
+	0x3f, 0x65, 0x37, 0x1f, 0x0d, 0x01, 0xab, 0x86, 0x80, 0x9f, 0x86, 0x80, 0xf7, 0x96, 0x04, 0xab,
+	0x96, 0x04, 0x9f, 0x2d, 0x09, 0xee, 0x2f, 0x37, 0x6e, 0x78, 0x61, 0x95, 0x5a, 0xc8, 0xa2, 0x2e,
+	0x2a, 0x45, 0xfb, 0x50, 0x5f, 0x87, 0xc6, 0x5f, 0x93, 0x47, 0x3e, 0xaa, 0xab, 0xbf, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0x08, 0x0c, 0xe6, 0x47, 0x74, 0x01, 0x00, 0x00,
 }
 
 func (m *MsgBoard) Marshal() (dAtA []byte, err error) {
@@ -187,47 +161,26 @@ func (m *MsgBoard) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Source)
 		i = encodeVarintBoard(dAtA, i, uint64(len(m.Source)))
 		i--
-		dAtA[i] = 0x4a
-	}
-	if len(m.AcceptAddress) > 0 {
-		i -= len(m.AcceptAddress)
-		copy(dAtA[i:], m.AcceptAddress)
-		i = encodeVarintBoard(dAtA, i, uint64(len(m.AcceptAddress)))
-		i--
-		dAtA[i] = 0x42
+		dAtA[i] = 0x32
 	}
 	if len(m.AcceptDenom) > 0 {
 		i -= len(m.AcceptDenom)
 		copy(dAtA[i:], m.AcceptDenom)
 		i = encodeVarintBoard(dAtA, i, uint64(len(m.AcceptDenom)))
 		i--
-		dAtA[i] = 0x3a
-	}
-	if len(m.Accept) > 0 {
-		i -= len(m.Accept)
-		copy(dAtA[i:], m.Accept)
-		i = encodeVarintBoard(dAtA, i, uint64(len(m.Accept)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.BaseAddress) > 0 {
-		i -= len(m.BaseAddress)
-		copy(dAtA[i:], m.BaseAddress)
-		i = encodeVarintBoard(dAtA, i, uint64(len(m.BaseAddress)))
-		i--
 		dAtA[i] = 0x2a
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintBoard(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x22
 	}
 	if len(m.BaseDenom) > 0 {
 		i -= len(m.BaseDenom)
 		copy(dAtA[i:], m.BaseDenom)
 		i = encodeVarintBoard(dAtA, i, uint64(len(m.BaseDenom)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.Base) > 0 {
-		i -= len(m.Base)
-		copy(dAtA[i:], m.Base)
-		i = encodeVarintBoard(dAtA, i, uint64(len(m.Base)))
 		i--
 		dAtA[i] = 0x1a
 	}
@@ -273,27 +226,15 @@ func (m *MsgBoard) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovBoard(uint64(l))
 	}
-	l = len(m.Base)
-	if l > 0 {
-		n += 1 + l + sovBoard(uint64(l))
-	}
 	l = len(m.BaseDenom)
 	if l > 0 {
 		n += 1 + l + sovBoard(uint64(l))
 	}
-	l = len(m.BaseAddress)
-	if l > 0 {
-		n += 1 + l + sovBoard(uint64(l))
-	}
-	l = len(m.Accept)
+	l = len(m.Address)
 	if l > 0 {
 		n += 1 + l + sovBoard(uint64(l))
 	}
 	l = len(m.AcceptDenom)
-	if l > 0 {
-		n += 1 + l + sovBoard(uint64(l))
-	}
-	l = len(m.AcceptAddress)
 	if l > 0 {
 		n += 1 + l + sovBoard(uint64(l))
 	}
@@ -407,38 +348,6 @@ func (m *MsgBoard) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Base", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowBoard
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBoard
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBoard
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Base = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field BaseDenom", wireType)
 			}
 			var stringLen uint64
@@ -469,71 +378,39 @@ func (m *MsgBoard) Unmarshal(dAtA []byte) error {
 			}
 			m.BaseDenom = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBoard
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthBoard
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBoard
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BaseAddress", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowBoard
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBoard
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBoard
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.BaseAddress = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Accept", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowBoard
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBoard
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBoard
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Accept = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 7:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field AcceptDenom", wireType)
 			}
@@ -565,39 +442,7 @@ func (m *MsgBoard) Unmarshal(dAtA []byte) error {
 			}
 			m.AcceptDenom = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AcceptAddress", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowBoard
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthBoard
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthBoard
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.AcceptAddress = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 9:
+		case 6:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Source", wireType)
 			}

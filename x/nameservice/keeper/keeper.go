@@ -46,22 +46,25 @@ func (k Keeper) ContractClearing(ctx sdk.Context,
 	}
 	// check board & compare
 	max := &recs[0]
-	k.flareskeeper.CheckBoard(ctx, &contract, max)
+	maxVoucher, err := k.flareskeeper.CheckBoard(ctx, &contract, max)
+	if err != nil {
+		k.Logger(ctx).Error("check board failed: ", err.Error())
+		return false
+	}
 	for _, record := range recs[1:] {
-		err := k.flareskeeper.CheckBoard(ctx, &contract, &record)
-		// fmt.Println("record: ", record.Voucher, "; max: ", max.Voucher)
+		recVoucher, err := k.flareskeeper.CheckBoard(ctx, &contract, &record)
 		if err != nil {
-			// fmt.Println("CheckBoard error: ", err.Error())
 			k.Logger(ctx).Error("check board failed: ", err.Error())
 			return false
 		}
-		if record.Voucher > max.Voucher {
+		if recVoucher.Amount.GT(maxVoucher.Amount) {
 			if err := k.flareskeeper.ReturnBack(ctx, &contract, max); err != nil {
 				// fmt.Println("ReturnBack error: ", err.Error())
 				k.Logger(ctx).Error("contract return failed: ", err.Error())
 				return false
 			}
 			max = &record
+			maxVoucher = recVoucher
 		} else {
 			if err := k.flareskeeper.ReturnBack(ctx, &contract, &record); err != nil {
 				// fmt.Println("ReturnBack error: ", err.Error())

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-    "github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -15,16 +15,15 @@ import (
 var _ = strconv.Itoa(42)
 
 type createBoardRequest struct {
-	BaseReq rest.BaseReq `json:"base_req"`
-	Creator string `json:"creator"`
-	Base string `json:"base"`
-	BaseDenom string `json:"baseDenom"`
-	BaseAddress string `json:"baseAddress"`
-	Accept string `json:"accept"`
-	AcceptDenom string `json:"acceptDenom"`
-	AcceptAddress string `json:"acceptAddress"`
-	Source string `json:"source"`
-	
+	BaseReq       rest.BaseReq `json:"base_req"`
+	Creator       string       `json:"creator"`
+	Base          string       `json:"base"`
+	BaseDenom     string       `json:"baseDenom"`
+	BaseAddress   string       `json:"baseAddress"`
+	Accept        string       `json:"accept"`
+	AcceptDenom   string       `json:"acceptDenom"`
+	AcceptAddress string       `json:"acceptAddress"`
+	Source        string       `json:"source"`
 }
 
 func createBoardHandler(clientCtx client.Context) http.HandlerFunc {
@@ -46,32 +45,15 @@ func createBoardHandler(clientCtx client.Context) http.HandlerFunc {
 			return
 		}
 
-		
-		parsedBase := req.Base
-		
 		parsedBaseDenom := req.BaseDenom
-		
-		parsedBaseAddress := req.BaseAddress
-		
-		parsedAccept := req.Accept
-		
 		parsedAcceptDenom := req.AcceptDenom
-		
-		parsedAcceptAddress := req.AcceptAddress
-		
 		parsedSource := req.Source
-		
 
 		msg := types.NewMsgBoard(
 			creator,
-			parsedBase,
 			parsedBaseDenom,
-			parsedBaseAddress,
-			parsedAccept,
 			parsedAcceptDenom,
-			parsedAcceptAddress,
 			parsedSource,
-			
 		)
 
 		tx.WriteGeneratedTxResponse(clientCtx, w, req.BaseReq, msg)

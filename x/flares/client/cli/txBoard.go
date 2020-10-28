@@ -11,15 +11,13 @@ import (
 
 func CmdCreateBoard() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-board [base] [baseDenom] [accept] [acceptDenom] [source]",
+		Use:   "create-board [baseDenom] [acceptDenom] [source]",
 		Short: "Creates a new board",
-		Args:  cobra.MinimumNArgs(5),
+		Args:  cobra.MinimumNArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argsBase := string(args[0])
-			argsBaseDenom := string(args[1])
-			argsAccept := string(args[2])
-			argsAcceptDenom := string(args[3])
-			argsSource := string(args[4])
+			argsBaseDenom := string(args[0])
+			argsAcceptDenom := string(args[1])
+			argsSource := string(args[2])
 
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			clientCtx, err := client.ReadTxCommandFlags(clientCtx, cmd.Flags())
@@ -28,8 +26,7 @@ func CmdCreateBoard() *cobra.Command {
 			}
 
 			msg := types.NewMsgBoard(clientCtx.GetFromAddress(),
-				string(argsBase), string(argsBaseDenom), "",
-				string(argsAccept), string(argsAcceptDenom), "", string(argsSource))
+				string(argsBaseDenom), string(argsAcceptDenom), string(argsSource))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

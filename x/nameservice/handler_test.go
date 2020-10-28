@@ -3,6 +3,7 @@ package nameservice_test
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	. "github.com/onsi/ginkgo"
@@ -382,7 +383,7 @@ var _ = Describe("x/nameservice", func() {
 	Describe("Test multi-tokens auctions for nameservice", func() {
 		value := "multi.cosmos"
 
-		Context("create a name", func() {
+		Context("create boards & a name", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
 					tmproto.Header{Height: 299, Time: time.Unix(10, 0)})
@@ -390,6 +391,54 @@ var _ = Describe("x/nameservice", func() {
 					value, "9base")
 				_, err := nsHandle(ctx, msg)
 				Expect(err).ShouldNot(HaveOccurred())
+				msgBoard := types.NewMsgBoard(addrs[1], "base", "aaa", "local")
+				_, err = handle(ctx, msgBoard)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err := sdk.ParseCoins("1000base")
+				Expect(err).ShouldNot(HaveOccurred())
+				boardAcc, err := sdk.AccAddressFromBech32(msgBoard.Address)
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[1], boardAcc, coins)
+				coins, err = sdk.ParseCoins("100000aaa")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[1], boardAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				msgBoard = types.NewMsgBoard(addrs[1], "base", "bbb", "local")
+				_, err = handle(ctx, msgBoard)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err = sdk.ParseCoins("1000base")
+				Expect(err).ShouldNot(HaveOccurred())
+				boardAcc, err = sdk.AccAddressFromBech32(msgBoard.Address)
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[1], boardAcc, coins)
+				coins, err = sdk.ParseCoins("50000bbb")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[1], boardAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				msgBoard = types.NewMsgBoard(addrs[1], "base", "ccc", "local")
+				_, err = handle(ctx, msgBoard)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err = sdk.ParseCoins("1000base")
+				Expect(err).ShouldNot(HaveOccurred())
+				boardAcc, err = sdk.AccAddressFromBech32(msgBoard.Address)
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[1], boardAcc, coins)
+				coins, err = sdk.ParseCoins("10000ccc")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[1], boardAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				boards := keeper.GetAllBoard(ctx)
+				Expect(3).Should(Equal(len(boards)))
+
 			})
 		})
 
@@ -482,65 +531,77 @@ var _ = Describe("x/nameservice", func() {
 			})
 		})
 
-		// Context("clearing the contract", func() {
-		// 	It("should be success", func() {
-		// 		ctx = ctx.WithBlockHeader(
-		// 			tmproto.Header{Height: 380, Time: time.Unix(10, 0)})
-		// 		handler.BeginBlockHandle(ctx, abci.RequestBeginBlock{}, *keeper)
-		// 		grpcReq := &types.QueryAllContractRequest{
-		// 			State: "success"}
-		// 		cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-		// 		resp, err := keeper.AllContract(cctx, grpcReq)
-		// 		Expect(err).ShouldNot(HaveOccurred())
-		// 		Expect(3).Should(Equal(len(resp.Contract)))
+		Context("clearing the contract", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 380, Time: time.Unix(10, 0)})
+				handler.BeginBlockHandle(ctx, abci.RequestBeginBlock{}, *keeper)
+				grpcReq := &types.QueryAllContractRequest{
+					State: "success"}
+				cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err := keeper.AllContract(cctx, grpcReq)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(3).Should(Equal(len(resp.Contract)))
 
-		// 		grpcReq = &types.QueryAllContractRequest{
-		// 			State: "fail"}
-		// 		cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-		// 		resp, err = keeper.AllContract(cctx, grpcReq)
-		// 		Expect(err).ShouldNot(HaveOccurred())
-		// 		Expect(0).Should(Equal(len(resp.Contract)))
+				grpcReq = &types.QueryAllContractRequest{
+					State: "fail"}
+				cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err = keeper.AllContract(cctx, grpcReq)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(0).Should(Equal(len(resp.Contract)))
 
-		// 		grpcReq = &types.QueryAllContractRequest{
-		// 			State: ""}
-		// 		cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-		// 		resp, err = keeper.AllContract(cctx, grpcReq)
-		// 		Expect(err).ShouldNot(HaveOccurred())
-		// 		Expect(0).Should(Equal(len(resp.Contract)))
-		// 	})
-		// })
+				grpcReq = &types.QueryAllContractRequest{
+					State: ""}
+				cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err = keeper.AllContract(cctx, grpcReq)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(0).Should(Equal(len(resp.Contract)))
+			})
+		})
 
-		// Context("check all account balances after the contract clearing", func() {
-		// 	It("should be success", func() {
-		// 		ctx = ctx.WithBlockHeader(
-		// 			tmproto.Header{Height: 391, Time: time.Unix(10, 0)})
+		Context("check all account balances after the contract clearing", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 391, Time: time.Unix(10, 0)})
 
-		// 		grpcReq := &types.QueryAllContractRequest{}
-		// 		cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-		// 		resp, err := keeper.AllContract(cctx, grpcReq)
-		// 		Expect(err).ShouldNot(HaveOccurred())
-		// 		Expect(0).Should(Equal(len(resp.Contract)))
+				grpcReq := &types.QueryAllContractRequest{}
+				cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err := keeper.AllContract(cctx, grpcReq)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(0).Should(Equal(len(resp.Contract)))
 
-		// 		grpcReq = &types.QueryAllContractRequest{
-		// 			State: "success"}
-		// 		cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
-		// 		resp, err = keeper.AllContract(cctx, grpcReq)
-		// 		Expect(err).ShouldNot(HaveOccurred())
-		// 		Expect(2).Should(Equal(len(resp.Contract)))
+				grpcReq = &types.QueryAllContractRequest{
+					State: "success"}
+				cctx = context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err = keeper.AllContract(cctx, grpcReq)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(3).Should(Equal(len(resp.Contract)))
 
-		// 		c := resp.Contract[0]
-		// 		moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
-		// 		Expect(err).ShouldNot(HaveOccurred())
-		// 		coin := bankKeeper.GetBalance(ctx, moduleAcc, denom)
-		// 		Expect(int64(0)).Should(Equal(coin.Amount.Int64()))
-
-		// 		coin = bankKeeper.GetBalance(ctx, addrs[0], denom)
-		// 		Expect(int64(10000119)).Should(Equal(coin.Amount.Int64()))
-		// 		coin = bankKeeper.GetBalance(ctx, addrs[1], denom)
-		// 		Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
-		// 		coin = bankKeeper.GetBalance(ctx, addrs[2], denom)
-		// 		Expect(int64(9999879)).Should(Equal(coin.Amount.Int64()))
-		// 	})
-		// })
+				c := getContract(resp.Contract, value)
+				moduleAcc, err := sdk.AccAddressFromBech32(c.Receiver)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins := bankKeeper.GetAllBalances(ctx, moduleAcc)
+				for _, coin := range coins {
+					Expect(int64(0)).Should(Equal(coin.Amount.Int64()))
+				}
+				coin := bankKeeper.GetBalance(ctx, addrs[3], denoms[1])
+				Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[4], denoms[2])
+				Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[5], denoms[3])
+				Expect(int64(9999898)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[0], denoms[3])
+				Expect(int64(10000100)).Should(Equal(coin.Amount.Int64()))
+			})
+		})
 	})
 })
+
+func getContract(contracts []*types.MsgContract, key string) *types.MsgContract {
+	for _, c := range contracts {
+		if strings.EqualFold(c.Key, key) {
+			return c
+		}
+	}
+	return nil
+}

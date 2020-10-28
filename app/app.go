@@ -259,12 +259,16 @@ func New(
 	// app.BankKeeper = bankkeeper.NewBaseKeeper(
 	// 	appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
 	// )
+	app.BankKeeper = bankkeeper.NewBaseKeeper(
+		appCodec, keys[banktypes.StoreKey],
+		app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
+	)
 	app.flaresKeeper = *flareskeeper.NewKeeper(
 		appCodec, keys[flarestypes.StoreKey], keys[flarestypes.MemStoreKey],
+		app.BankKeeper,
 	)
-	app.BankKeeper = flaresbank.NewBankKeeperWrapper(bankkeeper.NewBaseKeeper(
-		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
-	), app.flaresKeeper)
+	app.BankKeeper = flaresbank.NewBankKeeperWrapper(
+		app.BankKeeper, app.flaresKeeper)
 
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),

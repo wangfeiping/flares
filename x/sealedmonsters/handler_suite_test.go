@@ -65,10 +65,6 @@ func MockSdkContext() sdk.Context {
 	return sdk.NewContext(cms, tmproto.Header{}, false, log.NewNopLogger())
 }
 
-func MockFlaresKeeper() *keeper.Keeper {
-	return keeper.NewKeeper(encCfg.Marshaler, flaresStoreKey, flaresMemStoreKey)
-}
-
 func MockParamsKeeper() paramskeeper.Keeper {
 	return paramskeeper.NewKeeper(encCfg.Marshaler, encCfg.Amino,
 		sdk.NewKVStoreKey(paramstypes.StoreKey),
@@ -84,7 +80,22 @@ func MockAccountKeeper(pk paramskeeper.Keeper) authkeeper.AccountKeeper {
 	)
 }
 
-func MockBankKeeper(ak authkeeper.AccountKeeper, pk paramskeeper.Keeper,
+func MockBankKeeper(ak authkeeper.AccountKeeper,
+	pk paramskeeper.Keeper) bankkeeper.Keeper {
+	return bankkeeper.NewBaseKeeper(
+		encCfg.Marshaler, bankStoreKey,
+		ak, pk.Subspace(banktypes.ModuleName),
+		// app.BlockedAddrs(),
+		make(map[string]bool),
+	)
+}
+
+func MockFlaresKeeper(bank bankkeeper.Keeper) *keeper.Keeper {
+	return keeper.NewKeeper(encCfg.Marshaler,
+		flaresStoreKey, flaresMemStoreKey, bank)
+}
+
+func MockFlaresBankKeeper(bank bankkeeper.Keeper,
 	flaresKeeper keeper.Keeper) bankkeeper.Keeper {
 	// return bank.NewBaseKeeper(
 	// 	ak,
@@ -92,12 +103,7 @@ func MockBankKeeper(ak authkeeper.AccountKeeper, pk paramskeeper.Keeper,
 	// 	// app.ModuleAccountAddrs(),
 	// 	make(map[string]bool),
 	// )
-	return flaresbank.NewBankKeeperWrapper(bankkeeper.NewBaseKeeper(
-		encCfg.Marshaler, bankStoreKey,
-		ak, pk.Subspace(banktypes.ModuleName),
-		// app.BlockedAddrs(),
-		make(map[string]bool),
-	), flaresKeeper)
+	return flaresbank.NewBankKeeperWrapper(bank, flaresKeeper)
 }
 
 func MockSealedMonstersKeeper(flaresKeeper *keeper.Keeper, bk bankkeeper.Keeper) *sealedkeeper.Keeper {

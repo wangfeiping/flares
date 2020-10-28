@@ -84,7 +84,7 @@ func (k Keeper) ClearingContract(ctx sdk.Context,
 	moduleName string, msg *types.MsgContract) error {
 	contractClearing := cacheContractClearings[msg.Module]
 	if contractClearing == nil {
-		ctx.Logger().With("module", moduleName).
+		k.Logger(ctx).
 			Error(types.ErrContractClearingNotFound.Error(),
 				"height", ctx.BlockHeight(),
 				"module", msg.Module, "contract", msg.Key)
@@ -92,14 +92,14 @@ func (k Keeper) ClearingContract(ctx sdk.Context,
 		return types.ErrContractClearingNotFound
 	}
 	if contractClearing(ctx, *msg) {
-		ctx.Logger().With("module", moduleName).
+		k.Logger(ctx).
 			Info("the contract clearing was successful",
 				"height", ctx.BlockHeight(),
 				"module", msg.Module, "contract", msg.Key)
 		k.closeContract(ctx, msg, nil)
 		return nil
 	}
-	ctx.Logger().With("module", moduleName).
+	k.Logger(ctx).
 		Error(types.ErrContractClearingFailed.Error(),
 			"height", ctx.BlockHeight(),
 			"module", msg.Module, "contract", msg.Key)
@@ -116,14 +116,34 @@ func (k Keeper) CheckContractBottom(msg *types.MsgContract, amount sdk.Coin) err
 	return nil
 }
 
-func (k Keeper) Return(ctx sdk.Context,
+func (k Keeper) ReturnBack(ctx sdk.Context,
 	contract *types.MsgContract, record *types.MsgContractTransferRecord) error {
-	return nil
+	moduleAcc, err := sdk.AccAddressFromBech32(contract.Receiver)
+	if err != nil {
+		return err
+	}
+	from, err := sdk.AccAddressFromBech32(record.From)
+	if err != nil {
+		return err
+	}
+	amt, err := sdk.ParseCoins(record.Amount)
+	if err != nil {
+		return err
+	}
+	return k.bank.SendCoins(ctx, moduleAcc, from, amt)
 }
 
 func (k Keeper) Deal(ctx sdk.Context,
 	contract *types.MsgContract, record *types.MsgContractTransferRecord) error {
-	return nil
+	moduleAcc, err := sdk.AccAddressFromBech32(contract.Receiver)
+	if err != nil {
+		return err
+	}
+	amt, err := sdk.ParseCoins(record.Amount)
+	if err != nil {
+		return err
+	}
+	return k.bank.SendCoins(ctx, moduleAcc, contract.Creator, amt)
 }
 
 func (k Keeper) GetContract(ctx sdk.Context,

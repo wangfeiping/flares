@@ -26,10 +26,11 @@ var _ = Describe("x/sealedmonsters", func() {
 		addrs []sdk.AccAddress
 	)
 	ctx := MockSdkContext()
-	keeper := MockFlaresKeeper()
 	paramsKeeper := MockParamsKeeper()
 	accountKeeper := MockAccountKeeper(paramsKeeper)
-	bankKeeper := MockBankKeeper(accountKeeper, paramsKeeper, *keeper)
+	bankKeeper := MockBankKeeper(accountKeeper, paramsKeeper)
+	keeper := MockFlaresKeeper(bankKeeper)
+	bankKeeper = MockFlaresBankKeeper(bankKeeper, *keeper)
 	sealedKeeper := MockSealedMonstersKeeper(keeper, bankKeeper)
 	handle := sealedmonsters.NewHandler(*sealedKeeper)
 

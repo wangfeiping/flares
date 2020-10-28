@@ -23,9 +23,14 @@ func (k Keeper) CreateBoard(ctx sdk.Context, board types.MsgBoard) {
 }
 
 func (k Keeper) CheckBoard(ctx sdk.Context,
-	contract *types.MsgContract, record *types.MsgContractTransferRecord) {
+	contract *types.MsgContract, record *types.MsgContractTransferRecord) error {
 	// TODO board logic: value discover
-	record.Voucher = 100
+	coin, err := sdk.ParseCoin(record.Amount)
+	if err != nil {
+		return err
+	}
+	record.Voucher = uint32(coin.Amount.Int64())
+	return nil
 }
 
 func (k Keeper) GetAllBoard(ctx sdk.Context) (msgs []types.MsgBoard) {

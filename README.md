@@ -11,58 +11,53 @@
 - It's a value consensus.  
 - It's a multi to multi contract.  
 
-## Demos
-
-### Name Service - flares with payment or auctions
-
-Refer to a demo project [nameservice](https://tutorials.cosmos.network/nameservice/tutorial/00-intro.html) and make some changes.
-
-![flares-nameservice](https://raw.githubusercontent.com/wangfeiping/flares/hackatom2020/docs/flares-nameservice.png)
-
-### Sealed Monsters - flares with games
-
-Refer to a demo project [scavenge](https://tutorials.cosmos.network/scavenge/tutorial/01-background.html) and make some changes.
-
 ## Introduction
 
 ### Concept
 
 - contract
 
+As an intermediate module for payment, secure and realize the value consensus of multiple crypto assets through services such as DEC and DeFi
+
 - voucher
+
+Digital credentials for encrypted assets after value consensus
 
 - board
 
+Provides queries and exchange interfaces for encrypted assets
+
 - clearing
 
-## Create
+This module realizes the functions of managing and serencing encrypted assets and reallocating them according to the contract application
+
+## Demos
+
+### Name Service - flares with payment or auctions
+
+Refer to a demo project [nameservice](https://tutorials.cosmos.network/nameservice/tutorial/00-intro.html) and make some changes.
+
+![Name Service - flares with payment or auctions](https://raw.githubusercontent.com/wangfeiping/flares/hackatom2020/docs/flares-nameservice.png)
+
+### Sealed Monsters - flares with games
+
+Refer to a demo project [scavenge](https://tutorials.cosmos.network/scavenge/tutorial/01-background.html) and make some changes.
+
+![Sealed Monsters - flares with games](https://raw.githubusercontent.com/wangfeiping/flares/hackatom2020/docs/flares-game-sealed-monsters.png)
+
+### Test Cases
 
 ```
-# github.com/tendermint/starport   @ latest of develop
-# github.com/cosmos/gaia           @ stargate-4
-# github.com/ovrclk/relayer        @ stargate-4
-# github.com/cosmos/cosmos-sdk     @ v0.40.0-rc0
-# github.com/tendermint/tendermint @ v0.34.0-rc4.0.20201005135527-d7d0ffea13c6
+$ cd $GOPATH/src/github.com/wangfeiping/flares
+$ go test ./...
 
-$ starport app github.com/wangfeiping/flares --sdk-version stargate
+or
 
-$ cd flares/
+$ go get -u github.com/onsi/ginkgo/ginkgo
+$ cd $GOPATH/src/github.com/wangfeiping/flares
+$ ginkgo ./...
 
-$ starport type contract key receiver accept durationHeight bottom \
-    --module flares --sdk-version stargate
-
-$ starport type contractTransferRecord hash from to amount \
-    --module flares --sdk-version stargate
-
-$ starport type board base baseDenom baseAddress \
-    accept acceptDenom acceptAddress \
-    source \
-    --module flares --sdk-version stargate
-
-$ starport serve
 ```
-
-`serve` command installs dependencies, initializes and runs the application.
 
 ## Relay to gaia
 
@@ -154,22 +149,6 @@ $ rly q bal flares | jq
 # just execute
 
 $ ./scripts/protocgen
-
-```
-
-## Test
-
-```
-# Test
-
-$ cd $GOPATH/src/github.com/wangfeiping/flares
-$ go test ./...
-
-or
-
-$ go get -u github.com/onsi/ginkgo/ginkgo
-$ cd $GOPATH/src/github.com/wangfeiping/flares
-$ ginkgo ./...
 
 ```
 

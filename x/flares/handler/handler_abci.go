@@ -13,9 +13,6 @@ import (
 func BeginBlockHandle(ctx sdk.Context, req abci.RequestBeginBlock,
 	k keeper.Keeper) {
 	contracts := k.GetAllContract(ctx)
-	k.Logger(ctx).Debug("Begin block handle",
-		"height", ctx.BlockHeight(),
-		"contracts", len(contracts))
 	for _, c := range contracts {
 		if k.IsAuctions(&c) {
 			if uint64(ctx.BlockHeight()) >= c.Height+uint64(c.DurationHeight) {
@@ -26,4 +23,7 @@ func BeginBlockHandle(ctx sdk.Context, req abci.RequestBeginBlock,
 			}
 		}
 	}
+	k.Logger(ctx).Debug("Begin block handle",
+		"height", ctx.BlockHeight(),
+		"contracts", len(contracts))
 }

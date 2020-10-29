@@ -8,5 +8,5 @@ import (
 
 // x/sealedmonsters module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrMonsterExists = sdkerrors.Register(ModuleName, 3100, "monster already exists")
 )

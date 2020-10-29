@@ -15,7 +15,7 @@ func (k Keeper) CreateSeal(ctx sdk.Context, seal types.MsgSeal) error {
 	seal.Scavenger = seal.Creator.String()
 
 	contract := *NewContract(seal.Creator)
-	contract, err := k.flaresKeeper.GetContract(ctx, flareskeeper.BuildContractKey(&contract))
+	contract, err := k.FlaresKeeper.GetContract(ctx, flareskeeper.BuildContractKey(&contract))
 	macc, err := sdk.AccAddressFromBech32(contract.Receiver)
 	if err != nil {
 		return err

@@ -5,7 +5,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/wangfeiping/flares/x/sealedmonsters/keeper"
-	// "github.com/wangfeiping/flares/x/sealedmonsters/types"
+	"github.com/wangfeiping/flares/x/sealedmonsters/types"
 )
 
 // BeginBlockHandle check for infraction evidence or downtime of validators
@@ -13,6 +13,20 @@ import (
 func BeginBlockHandle(ctx sdk.Context, req abci.RequestBeginBlock,
 	k keeper.Keeper) {
 	monsters := k.GetAllMonster(ctx)
+	for _, monster := range monsters {
+		if uint64(ctx.BlockHeight()) >= monster.Height+uint64(monster.DurationHeight) {
+			k.Logger(ctx).Info("game over", "height", ctx.BlockHeight())
+			k.SealedMonster(ctx, monster)
+			reveal := types.NewMsgReveal(monster.Creator, monster.SolutionHash)
+			k.CreateReveal(ctx, *reveal)
+			c, err := k.FlaresKeeper.GetContract(ctx, monster.ContractKey)
+			if err != nil {
+				k.Logger(ctx).Error(err.Error())
+				panic(err)
+			}
+			k.FlaresKeeper.ClearingContract(ctx, types.ModuleName, &c)
+		}
+	}
 	k.Logger(ctx).Debug("Begin block handle",
 		"height", ctx.BlockHeight(),
 		"monsters", len(monsters))

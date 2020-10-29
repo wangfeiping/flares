@@ -1,6 +1,7 @@
 package sealedmonsters_test
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -14,7 +15,9 @@ import (
 	"github.com/wangfeiping/flares/x/sealedmonsters"
 	sealedtypes "github.com/wangfeiping/flares/x/sealedmonsters/types"
 
-	// "github.com/wangfeiping/flares/x/flares/handler"
+	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
+	"github.com/wangfeiping/flares/x/flares/handler"
 	flareskeeper "github.com/wangfeiping/flares/x/flares/keeper"
 	"github.com/wangfeiping/flares/x/flares/types"
 )
@@ -22,6 +25,7 @@ import (
 var _ = Describe("x/sealedmonsters", func() {
 
 	var (
+		voucher string   = "VOUCHER"
 		denoms  []string = []string{"base", "aaa", "bbb", "ccc"}
 		balance int64    = 9999999
 		num     int      = 6
@@ -36,6 +40,10 @@ var _ = Describe("x/sealedmonsters", func() {
 	bankKeeper = MockFlaresBankKeeper(bankKeeper, *keeper)
 	sealedKeeper := MockSealedMonstersKeeper(keeper, bankKeeper)
 	handle := sealedmonsters.NewHandler(*sealedKeeper)
+	flareshandle := handler.NewHandler(*keeper)
+
+	supply := sdk.NewCoins()
+	bankKeeper.SetSupply(ctx, banktypes.NewSupply(supply))
 
 	BeforeEach(func() {
 
@@ -103,6 +111,75 @@ var _ = Describe("x/sealedmonsters", func() {
 				}
 			})
 		})
+
+		Context("create boards", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 98, Time: time.Unix(10, 0)})
+				msgBoard := types.NewMsgBoard(addrs[0], "base", "aaa", "local")
+				_, err := flareshandle(ctx, msgBoard)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err := sdk.ParseCoins("1000base")
+				Expect(err).ShouldNot(HaveOccurred())
+				boardAcc, err := sdk.AccAddressFromBech32(msgBoard.Address)
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				coins, err = sdk.ParseCoins("100000aaa")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				msgBoard = types.NewMsgBoard(addrs[0], "base", "bbb", "local")
+				_, err = flareshandle(ctx, msgBoard)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err = sdk.ParseCoins("1000base")
+				Expect(err).ShouldNot(HaveOccurred())
+				boardAcc, err = sdk.AccAddressFromBech32(msgBoard.Address)
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				coins, err = sdk.ParseCoins("50000bbb")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				msgBoard = types.NewMsgBoard(addrs[0], "base", "ccc", "local")
+				_, err = flareshandle(ctx, msgBoard)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err = sdk.ParseCoins("1000base")
+				Expect(err).ShouldNot(HaveOccurred())
+				boardAcc, err = sdk.AccAddressFromBech32(msgBoard.Address)
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				coins, err = sdk.ParseCoins("10000ccc")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				msgBoard = types.NewMsgBoard(addrs[0], "base", "base", "local")
+				_, err = flareshandle(ctx, msgBoard)
+				Expect(err).ShouldNot(HaveOccurred())
+				coins, err = sdk.ParseCoins("1base")
+				Expect(err).ShouldNot(HaveOccurred())
+				boardAcc, err = sdk.AccAddressFromBech32(msgBoard.Address)
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				coins, err = sdk.ParseCoins("1base")
+				Expect(err).ShouldNot(HaveOccurred())
+				err = bankKeeper.SendCoins(ctx,
+					addrs[0], boardAcc, coins)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				boards := keeper.GetAllBoard(ctx)
+				Expect(4).Should(Equal(len(boards)))
+			})
+		})
 	})
 
 	Describe("Test sealed monsters game", func() {
@@ -114,6 +191,26 @@ var _ = Describe("x/sealedmonsters", func() {
 					"a monster", "kerberos", "1base")
 				_, err := handle(ctx, msg)
 				Expect(err).ShouldNot(HaveOccurred())
+			})
+		})
+
+		Context("create second monster", func() {
+			It("should be failed", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 100, Time: time.Unix(10, 0)})
+				msg := sealedtypes.NewMsgMonster(addrs[0],
+					"a monster", "diablo", "1base")
+				_, err := handle(ctx, msg)
+				Expect(err).Should(HaveOccurred())
+			})
+		})
+
+		Context("checks voucher", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 101, Time: time.Unix(10, 0)})
+				coins := bankKeeper.GetSupply(ctx).GetTotal()
+				Expect(0).Should(Equal(len(coins)))
 			})
 		})
 
@@ -151,6 +248,17 @@ var _ = Describe("x/sealedmonsters", func() {
 			})
 		})
 
+		Context("checks total supply of the voucher", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 101, Time: time.Unix(10, 0)})
+				coins := bankKeeper.GetSupply(ctx).GetTotal()
+				Expect(1).Should(Equal(len(coins)))
+				Expect(voucher).Should(Equal(coins[0].Denom))
+				Expect(int64(121080000)).Should(Equal(coins[0].Amount.Int64()))
+			})
+		})
+
 		Context("check all account balances before the game over", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
@@ -166,16 +274,31 @@ var _ = Describe("x/sealedmonsters", func() {
 				Expect(int64(9)).Should(Equal(coin.Amount.Int64()))
 				coin = bankKeeper.GetBalance(ctx, moduleAcc, denoms[3])
 				Expect(int64(1099)).Should(Equal(coin.Amount.Int64()))
+
 				coin = bankKeeper.GetBalance(ctx, addrs[1], denoms[1])
 				Expect(int64(9998999)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[1], voucher)
+				Expect(int64(10000000)).Should(Equal(coin.Amount.Int64()))
+
 				coin = bankKeeper.GetBalance(ctx, addrs[2], denoms[2])
 				Expect(int64(9999990)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[2], voucher)
+				Expect(int64(180000)).Should(Equal(coin.Amount.Int64()))
+
 				coin = bankKeeper.GetBalance(ctx, addrs[3], denoms[3])
 				Expect(int64(9999000)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[3], voucher)
+				Expect(int64(99900000)).Should(Equal(coin.Amount.Int64()))
+
 				coin = bankKeeper.GetBalance(ctx, addrs[4], denoms[1])
 				Expect(int64(9999899)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[4], voucher)
+				Expect(int64(1000000)).Should(Equal(coin.Amount.Int64()))
+
 				coin = bankKeeper.GetBalance(ctx, addrs[5], denoms[3])
 				Expect(int64(9999899)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[5], voucher)
+				Expect(int64(10000000)).Should(Equal(coin.Amount.Int64()))
 			})
 		})
 
@@ -184,6 +307,25 @@ var _ = Describe("x/sealedmonsters", func() {
 				ctx = ctx.WithBlockHeader(
 					tmproto.Header{Height: 199, Time: time.Unix(10, 0)})
 				sealedmonsters.BeginBlockHandle(ctx, abci.RequestBeginBlock{}, *sealedKeeper)
+
+				monsters := sealedKeeper.GetAllMonster(ctx)
+				Expect(0).Should(Equal(len(monsters)))
+				reveals := sealedKeeper.GetAllReveal(ctx)
+				Expect(1).Should(Equal(len(reveals)))
+
+				grpcReq := &types.QueryAllContractRequest{
+					State: "success"}
+				cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err := keeper.AllContract(cctx, grpcReq)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(1).Should(Equal(len(resp.Contract)))
+			})
+		})
+
+		Context("check all account balances after the game over", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 200, Time: time.Unix(10, 0)})
 
 			})
 		})

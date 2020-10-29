@@ -36,6 +36,11 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
+func (k Keeper) SendCoins(ctx sdk.Context,
+	fromAddr sdk.AccAddress, toAddr sdk.AccAddress, amt sdk.Coins) error {
+	return k.bank.SendCoins(ctx, fromAddr, toAddr, amt)
+}
+
 func AccAddressString(moduleName, key string) sdk.AccAddress {
 	return sdk.AccAddress(crypto.AddressHash([]byte(
 		fmt.Sprintf("%s-%s", moduleName, key))))

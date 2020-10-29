@@ -44,6 +44,7 @@ var sealedMemStoreKey *sdk.KVStoreKey = sdk.NewKVStoreKey(sealedtypes.MemStoreKe
 // module account permissions
 var maccPerms map[string][]string = map[string][]string{
 	authtypes.FeeCollectorName: nil,
+	types.ModuleName:           {authtypes.Minter, authtypes.Burner},
 }
 
 func TestKeeper(t *testing.T) {

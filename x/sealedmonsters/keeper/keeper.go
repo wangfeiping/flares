@@ -18,20 +18,22 @@ type (
 		cdc          codec.Marshaler
 		storeKey     sdk.StoreKey
 		memKey       sdk.StoreKey
-		flaresKeeper flareskeeper.Keeper
+		FlaresKeeper flareskeeper.Keeper
 		bankKeeper   bankkeeper.Keeper
 	}
 )
 
 func NewKeeper(cdc codec.Marshaler, storeKey, memKey sdk.StoreKey,
-	flaresKeeper flareskeeper.Keeper, bankKeeper bankkeeper.Keeper) *Keeper {
-	return &Keeper{
+	k flareskeeper.Keeper, bankKeeper bankkeeper.Keeper) *Keeper {
+	sealedKeeper := &Keeper{
 		cdc:          cdc,
 		storeKey:     storeKey,
 		memKey:       memKey,
-		flaresKeeper: flaresKeeper,
 		bankKeeper:   bankKeeper,
+		FlaresKeeper: k,
 	}
+	k.RegisterContractClearing(types.ModuleName, sealedKeeper.ContractClearing)
+	return sealedKeeper
 }
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
@@ -42,4 +44,10 @@ func NewContract(creator sdk.AccAddress) *flarestypes.MsgContract {
 	return flarestypes.NewMsgContract(
 		creator,
 		types.ModuleName, types.ModuleName, "", -1, "")
+}
+
+func (k Keeper) ContractClearing(ctx sdk.Context,
+	contract flarestypes.MsgContract) bool {
+
+	return true
 }

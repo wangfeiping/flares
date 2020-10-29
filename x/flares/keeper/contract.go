@@ -28,6 +28,10 @@ func (k Keeper) IsAuctions(contract *types.MsgContract) bool {
 	return contract.DurationHeight > 0
 }
 
+func (k Keeper) IsMintVoucher(contract *types.MsgContract) bool {
+	return contract.DurationHeight < 0
+}
+
 func (k Keeper) CreateContract(ctx sdk.Context,
 	contract *types.MsgContract) (string, error) {
 	store := k.getContractStore(ctx)
@@ -177,6 +181,25 @@ func (k Keeper) GetAllContract(ctx sdk.Context) (msgs []types.MsgContract) {
 func (k Keeper) CheckContractReceiver(ctx sdk.Context, accAddr string) []byte {
 	return k.getContractReceiverStore(ctx).
 		Get(types.KeyPrefix(accAddr))
+}
+
+func (k Keeper) MintVoucher(ctx sdk.Context,
+	contract *types.MsgContract, record *types.MsgContractTransferRecord) error {
+	// fmt.Println("Mint voucher: ", record.Amount)
+	voucher, err := k.CheckBoard(ctx, contract, record)
+	if err != nil {
+		return err
+	}
+	coins := sdk.NewCoins(voucher)
+	err = k.bank.MintCoins(ctx, types.ModuleName, coins)
+	if err != nil {
+		return err
+	}
+	acc, err := sdk.AccAddressFromBech32(record.From)
+	if err != nil {
+		return err
+	}
+	return k.bank.SendCoinsFromModuleToAccount(ctx, types.ModuleName, acc, coins)
 }
 
 func BuildContractKey(contract *types.MsgContract) string {

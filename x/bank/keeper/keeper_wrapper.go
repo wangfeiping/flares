@@ -64,6 +64,8 @@ func (k BankKeeperWrapper) SendCoins(ctx sdk.Context,
 			// check contract bottom
 			// check if the base price is met
 			k.flaresKeeper.ClearingContract(ctx, "flares/x/bank", &c)
+		} else if k.flaresKeeper.IsMintVoucher(&c) {
+			return k.flaresKeeper.MintVoucher(ctx, &c, &rec)
 		}
 	}
 	return nil

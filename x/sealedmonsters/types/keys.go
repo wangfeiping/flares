@@ -27,7 +27,9 @@ const (
 )
 
 const (
-	SealKey = "Seal-"
+	SealKey        = "Seal-"
+	RemovedSealKey = "RemovedSeal-"
+	WinnerSealKey  = "WinnerSeal-"
 )
 
 const (

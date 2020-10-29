@@ -25,7 +25,7 @@ import (
 var _ = Describe("x/sealedmonsters", func() {
 
 	var (
-		voucher string   = "VOUCHER"
+		voucher string   = types.VoucherDenom
 		denoms  []string = []string{"base", "aaa", "bbb", "ccc"}
 		balance int64    = 9999999
 		num     int      = 6
@@ -326,6 +326,28 @@ var _ = Describe("x/sealedmonsters", func() {
 			It("should be success", func() {
 				ctx = ctx.WithBlockHeader(
 					tmproto.Header{Height: 200, Time: time.Unix(10, 0)})
+
+				coin := bankKeeper.GetBalance(ctx, addrs[2], denoms[1])
+				Expect(int64(10000001)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[2], denoms[2])
+				Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[2], voucher)
+				Expect(int64(0)).Should(Equal(coin.Amount.Int64()))
+
+				coin = bankKeeper.GetBalance(ctx, addrs[3], denoms[0])
+				Expect(int64(10000001)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[3], denoms[1])
+				Expect(int64(10001097)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[3], denoms[2])
+				Expect(int64(9999999)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[3], denoms[3])
+				Expect(int64(10000099)).Should(Equal(coin.Amount.Int64()))
+				coin = bankKeeper.GetBalance(ctx, addrs[3], voucher)
+				Expect(int64(0)).Should(Equal(coin.Amount.Int64()))
+
+				total := bankKeeper.GetSupply(ctx).GetTotal()
+				supply := total.AmountOf(types.VoucherDenom)
+				Expect(int64(0)).Should(Equal(supply.Int64()))
 
 			})
 		})

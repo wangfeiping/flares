@@ -77,6 +77,15 @@ func (k Keeper) closeContract(ctx sdk.Context,
 		store.Set(types.KeyPrefix(contractKey), bz)
 		return
 	}
+	if k.IsMintVoucher(msg) {
+		total := k.bank.GetSupply(ctx).GetTotal()
+		supply := total.AmountOf(types.VoucherDenom)
+		if err := k.bank.BurnCoins(ctx, types.ModuleName,
+			sdk.NewCoins(sdk.NewCoin(types.VoucherDenom, supply))); err != nil {
+			k.Logger(ctx).Error("BurnCoins failed", "error", err.Error())
+			return
+		}
+	}
 	msg.Code = 0
 	msg.Result = "success"
 	bz := k.cdc.MustMarshalBinaryBare(msg)

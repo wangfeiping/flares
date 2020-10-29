@@ -30,6 +30,7 @@ const (
 	SuccessContractKey  = "SuccessContract"
 	FailContractKey     = "FailContract"
 	BoardKey            = "Board"
+	VoucherDenom        = "VOUCHER"
 )
 
 const (

@@ -50,7 +50,8 @@ func (k Keeper) SealedMonster(ctx sdk.Context, monster types.MsgMonster) {
 	bz := store.Get(types.KeyPrefix(types.MonsterKey))
 	store.Delete(types.KeyPrefix(types.MonsterKey))
 
-	store.Set(types.KeyPrefix(fmt.Sprintf("%s%s", types.SealedMonsterKey, monster.Id)), bz)
+	store.Set(types.KeyPrefix(fmt.Sprintf("%s%s",
+		types.SealedMonsterKey, monster.Id)), bz)
 }
 
 func (k Keeper) GetAllMonster(ctx sdk.Context) (msgs []types.MsgMonster) {

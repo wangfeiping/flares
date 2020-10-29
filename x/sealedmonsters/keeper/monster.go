@@ -9,7 +9,8 @@ import (
 
 func (k Keeper) CreateMonster(ctx sdk.Context, monster types.MsgMonster) error {
 	contract := NewContract(monster.Creator)
-	if err := k.flaresKeeper.CreateContract(ctx, contract); err != nil &&
+	contractKey, err := k.flaresKeeper.CreateContract(ctx, contract)
+	if err != nil &&
 		err != flarestypes.ErrContractExists {
 		return err
 	}
@@ -24,6 +25,10 @@ func (k Keeper) CreateMonster(ctx sdk.Context, monster types.MsgMonster) error {
 	if err = k.bankKeeper.SendCoins(ctx, monster.Creator, macc, amt); err != nil {
 		return err
 	}
+	monster.Height = uint64(ctx.BlockHeight())
+	monster.DurationHeight = 100
+	monster.ContractKey = contractKey
+
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.MonsterKey))
 	b := k.cdc.MustMarshalBinaryBare(&monster)
 	key := types.KeyPrefix(types.MonsterKey)

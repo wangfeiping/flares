@@ -48,7 +48,7 @@ var maccPerms map[string][]string = map[string][]string{
 
 func TestKeeper(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Name-Service Payment & Auctions Demo Suite")
+	RunSpecs(t, "Name-Service Payment&Auctions Demo Suite")
 }
 
 func MockSdkContext() sdk.Context {

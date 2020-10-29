@@ -12,5 +12,8 @@ message MsgMonster {
   string solutionHash = 4; 
   string reward = 5; 
   string solution = 6; 
+  int32 durationHeight = 7; 
+  fixed64 height = 8; 
+  string contractKey = 9; 
 }
 

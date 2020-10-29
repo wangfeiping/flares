@@ -28,7 +28,8 @@ func (k Keeper) IsAuctions(contract *types.MsgContract) bool {
 	return contract.DurationHeight > 0
 }
 
-func (k Keeper) CreateContract(ctx sdk.Context, contract *types.MsgContract) error {
+func (k Keeper) CreateContract(ctx sdk.Context,
+	contract *types.MsgContract) (string, error) {
 	store := k.getContractStore(ctx)
 	contractKey := BuildContractKey(contract)
 
@@ -38,7 +39,7 @@ func (k Keeper) CreateContract(ctx sdk.Context, contract *types.MsgContract) err
 		}
 		k.Logger(ctx).
 			Error(types.ErrContractExists.Error(), ": ", contractKey)
-		return types.ErrContractExists
+		return contractKey, types.ErrContractExists
 	}
 
 	contract.Receiver = AccAddressString(types.ModuleName,
@@ -53,7 +54,7 @@ func (k Keeper) CreateContract(ctx sdk.Context, contract *types.MsgContract) err
 	k.getContractReceiverStore(ctx).
 		Set(types.KeyPrefix(contract.Receiver), []byte(contractKey))
 
-	return nil
+	return contractKey, nil
 }
 
 func (k Keeper) closeContract(ctx sdk.Context,

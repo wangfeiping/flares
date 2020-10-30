@@ -52,6 +52,14 @@ Refer to a demo project [nameservice](https://tutorials.cosmos.network/nameservi
 ### Test Cases
 
 ```
+#  Test Cases code
+
+# x/sealedmonsters/handler_suite_test.go
+# x/sealedmonsters/handler_test.go
+
+# x/nameservice/handler_suite_test.go
+# x/nameservice/handler_test.go
+
 $ cd $GOPATH/src/github.com/wangfeiping/flares
 $ go test ./...
 
@@ -65,7 +73,7 @@ $ ginkgo ./...
 
 ### The command line executes the test case (Sealed Monsters)
 
-** Prepare the environment **
+**Prepare the environment**
 
 ```
 # build
@@ -222,7 +230,11 @@ $ flaresd tx bank send user cosmos1cvn2sc94jjp5xu7npl5nq0paugjrqw7ujczsu0 \
     --home ./demo/runtime/flares \
     --chain-id=flares
 
-# start the game
+```
+
+**start the game**
+
+```
 # create a monster (It will auto create a contract)
 
 $ flaresd tx sealedmonsters summon-monster \
@@ -296,6 +308,11 @@ supply:
   denom: VOUCHER
 ...
 
+```
+
+**game over**
+
+```
 # the game would be over after 100 blocks
 
 $ flaresd q flares list-contract

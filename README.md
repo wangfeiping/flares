@@ -9,7 +9,7 @@
 - It's an IBC network.  
 - It's a no-tokens-binding blockchain.  
 - It's a value consensus.  
-- It's a multi to multi contract.  
+- It's a multi to multi contract or module.  
 
 ## Introduction
 
@@ -45,6 +45,10 @@ Refer to a demo project [nameservice](https://tutorials.cosmos.network/nameservi
 
 ![Name Service - flares with payment or auctions](https://raw.githubusercontent.com/wangfeiping/flares/hackatom2020/docs/flares-nameservice-payment-or-auctions.png)
 
+### Future view
+
+![Future view](https://raw.githubusercontent.com/wangfeiping/flares/hackatom2020/docs/flares-future-view.png)
+
 ### Test Cases
 
 ```
@@ -56,6 +60,13 @@ or
 $ go get -u github.com/onsi/ginkgo/ginkgo
 $ cd $GOPATH/src/github.com/wangfeiping/flares
 $ ginkgo ./...
+
+```
+
+### build
+
+```
+$ make all
 
 ```
 

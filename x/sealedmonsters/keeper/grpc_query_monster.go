@@ -21,6 +21,7 @@ func (k Keeper) AllMonster(c context.Context, req *types.QueryAllMonsterRequest)
 
 	store := ctx.KVStore(k.storeKey)
 	monsterStore := prefix.NewStore(store, types.KeyPrefix(types.MonsterKey))
+	monsterStore = prefix.NewStore(monsterStore, types.KeyPrefix(types.MonsterKey))
 
 	pageRes, err := query.Paginate(monsterStore, req.Pagination, func(key []byte, value []byte) error {
 		var monster types.MsgMonster

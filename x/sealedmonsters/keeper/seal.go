@@ -50,9 +50,14 @@ func (k Keeper) RemoveSeal(ctx sdk.Context,
 	key := types.KeyPrefix(fmt.Sprintf("%s-%s-%s",
 		types.SealKey, contract.Receiver, seal.Id))
 	bz := store.Get(key)
+	if bz == nil {
+		return
+	}
+	store.Delete(key)
 	key = types.KeyPrefix(fmt.Sprintf("%s-%s-%s",
 		types.RemovedSealKey, contract.Receiver, seal.Id))
-	store.Set(key, bz)
+	rmStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RemovedSealKey))
+	rmStore.Set(key, bz)
 }
 
 func (k Keeper) WinnerSeal(ctx sdk.Context,
@@ -62,9 +67,14 @@ func (k Keeper) WinnerSeal(ctx sdk.Context,
 	key := types.KeyPrefix(fmt.Sprintf("%s-%s-%s",
 		types.SealKey, contract.Receiver, seal.Id))
 	bz := store.Get(key)
+	if bz == nil {
+		return
+	}
+	store.Delete(key)
 	key = types.KeyPrefix(fmt.Sprintf("%s-%s-%s",
 		types.WinnerSealKey, contract.Receiver, seal.Id))
-	store.Set(key, bz)
+	winStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.WinnerSealKey))
+	winStore.Set(key, bz)
 }
 
 func (k Keeper) GetAllSeal(ctx sdk.Context) (msgs []types.MsgSeal) {

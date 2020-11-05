@@ -351,5 +351,36 @@ var _ = Describe("x/sealedmonsters", func() {
 
 			})
 		})
+
+		Context("create third monster", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 300, Time: time.Unix(10, 0)})
+				msg := sealedtypes.NewMsgMonster(addrs[0],
+					"a monster", "diablo", "1base")
+				_, err := handle(ctx, msg)
+				Expect(err).ShouldNot(HaveOccurred())
+			})
+		})
+
+		Context("game over", func() {
+			It("should be success", func() {
+				ctx = ctx.WithBlockHeader(
+					tmproto.Header{Height: 400, Time: time.Unix(10, 0)})
+				sealedmonsters.BeginBlockHandle(ctx, abci.RequestBeginBlock{}, *sealedKeeper)
+
+				monsters := sealedKeeper.GetAllMonster(ctx)
+				Expect(0).Should(Equal(len(monsters)))
+				reveals := sealedKeeper.GetAllReveal(ctx)
+				Expect(2).Should(Equal(len(reveals)))
+
+				grpcReq := &types.QueryAllContractRequest{
+					State: "success"}
+				cctx := context.WithValue(context.Background(), sdk.SdkContextKey, ctx)
+				resp, err := keeper.AllContract(cctx, grpcReq)
+				Expect(err).ShouldNot(HaveOccurred())
+				Expect(1).Should(Equal(len(resp.Contract)))
+			})
+		})
 	})
 })

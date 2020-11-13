@@ -60,6 +60,12 @@ This component realizes the functions of managing and serencing encrypted assets
 
 The clearing component is the second layer of the contract. It can be called service customization contract also. The liquidation component is responsible for the final liquidation of the contract completion phase. For example, in the game sealed monsters, the standard contract will send the forged voucher to the sender after receiving the send transaction. The player ,I mean transferor, holds the voucher in the game. When the game judges the end of the game, it triggers the end of the contract. The contract will call the service customized clearing component to complete the final payment. In sealed monsters, the 100th block height after the creation of monster determines the end of the game, and the liquidation method will determine who wins the game. It will return all the assets paid by the winner first. Then, all winners will distribute the bonus, the bonus means the monster reward and the assets paid by the loser, in proportion to the voucher paid by the previous winners.  
 
+- Ace
+
+Ace is designed as an open verifiable random seed protocol. This seed can be verified by the cryptosystem.
+
+The project will use paillier(the standard homomorphic cryptosystem) as a basic implementation version, and defines interfaces to support more implementations.
+
 ## Demos
 
 ### Sealed Monsters - flares with games

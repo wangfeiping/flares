@@ -1,0 +1,25 @@
+syntax = "proto3";
+package ace.ace.v1beta1;
+
+import "cosmos/base/query/v1beta1/pagination.proto";
+// this line is used by starport scaffolding # 1
+import "ace/v1beta/seed.proto";
+
+
+option go_package = "github.com/wangfeiping/ace/x/ace/types";
+
+// Query defines the gRPC querier service.
+service Query {
+    // this line is used by starport scaffolding # 2
+	rpc AllSeed(QueryAllSeedRequest) returns (QueryAllSeedResponse);
+}
+
+// this line is used by starport scaffolding # 3
+message QueryAllSeedRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllSeedResponse {
+	repeated MsgSeed seed = 1;
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

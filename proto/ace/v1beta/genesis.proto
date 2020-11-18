@@ -1,9 +1,0 @@
-syntax = "proto3";
-package ace.ace.v1beta1;
-
-option go_package = "github.com/wangfeiping/ace/x/ace/types";
-
-// GenesisState defines the capability module's genesis state.
-message GenesisState {
-}
-

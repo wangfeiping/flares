@@ -60,9 +60,9 @@ Provides queries and exchange interfaces for encrypted assets.
 
 Board is a component of the contract used to evaluate the value of assets. At present, only the ratio of base token assets and accept token assets is used to calculate the valuation value of assets. In order to ensure the accuracy and credibility of asset evaluation, it is necessary to connect the real exchangeable service before starting the test-net. For example, decentralized exchange, DEX clearing.
 
-### - Ace
+### - Undercard
 
-Ace is designed as an open verifiable random seed protocol. This seed can be verified by the cryptosystem.
+Undercard is designed as an open verifiable random seed protocol. This seed can be verified by the cryptosystem.
 
 The project will use paillier(the standard homomorphic cryptosystem) as a basic implementation version, and defines interfaces to support more implementations.
 

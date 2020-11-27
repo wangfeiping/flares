@@ -66,6 +66,8 @@ Undercard is designed as an open verifiable random seed protocol. This seed can 
 
 The project will use paillier(the standard homomorphic cryptosystem) as a basic implementation version, and defines interfaces to support more implementations.
 
+[Detail of the algorithm](./docs/the-algorithm-of-undercard.md)
+
 ## Demos
 
 ### Sealed Monsters - flares with games
